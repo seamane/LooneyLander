@@ -1,13 +1,17 @@
 var GameState = function(game) {
   };
   
-  var fuel = 350.0;
+  var fuel = 350;
+  var fuelText;
+
+  var elapsedTimeText;
+  var spaceBarPressed = -3;
 
   // To Load images and sounds
   GameState.prototype.preload = function() {
       this.game.load.spritesheet('ship', 'assets/ship.png', 32, 32);
       this.game.load.image('ground', 'assets/ground.png');
-      this.game.load.image('background', 'assets/background.png');
+      this.game.load.image('background', 'assets/background.png', 3843, 1080);
       this.game.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
   };
 
@@ -63,13 +67,15 @@ var GameState = function(game) {
           Phaser.Keyboard.LEFT,
           Phaser.Keyboard.RIGHT,
           Phaser.Keyboard.UP,
-          Phaser.Keyboard.DOWN
+          Phaser.Keyboard.DOWN,
+          Phaser.Keyboard.SPACEBAR
       ]);
 
       this.game.time.advancedTiming = true;
  
 	//create text for UI
-	var fuelText = game.add.text(10, 10, "Fuel: " + fuel,  { font: "20px Arial", fill: generateHexColor() });
+	fuelText = game.add.text(10, 10, "Fuel: " + fuel,  { font: "20px Arial", fill: generateHexColor() });
+	elapsedTimeText = game.add.text(10, 30, "Elapsed time: " + this.game.time.totalElapsedSeconds(),  { font: "20px Arial", fill: generateHexColor() });
 };
 
 function generateHexColor() { 
@@ -116,6 +122,7 @@ function generateHexColor() {
   
   function updateUI() {
 	  fuelText.setText("Fuel: " + fuel);
+	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds()));
   }
 
   GameState.prototype.update = function() {
@@ -149,21 +156,28 @@ function generateHexColor() {
           }
       }
 
-      if (this.input.keyboard.isDown(Phaser.Keyboard.UP) && fuel > 0) {
+      if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && fuel > 50 && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 3) {
+      		spaceBarPressed = this.game.time.totalElapsedSeconds();
+              this.ship.body.velocity.setTo(0, -90);
+              this.ship.angle = -90;
+              fuel -= 50;
+      }
+      else if (this.input.keyboard.isDown(Phaser.Keyboard.UP) && fuel > 0) {
           this.ship.body.acceleration.x = Math.cos(this.ship.rotation) * this.ACCELERATION;
           this.ship.body.acceleration.y = Math.sin(this.ship.rotation) * this.ACCELERATION;
           this.ship.frame = 1;
-		  this.fuel -= .1;
+		  fuel -= 1;
+		  //fuelText.setText("Fuel: " + fuel);
       } else {
           this.ship.body.acceleration.setTo(0, 0);
 
           this.ship.frame = 0;
       }
 	  
-	  //updateUI();
+	  updateUI();
   };
 
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+  var game = new Phaser.Game(1800, 1000, Phaser.AUTO, 'game');
   game.state.add('game', GameState, true);
 
   window.focus();
