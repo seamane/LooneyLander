@@ -6,10 +6,15 @@ var GameState = function(game) {
 
   var elapsedTimeText;
   var spaceBarPressed = -3;
+  
+  var velocityXText;
+  var velocityYText;
+  
+  var shipForVelocity;
 
   // To Load images and sounds
   GameState.prototype.preload = function() {
-      this.game.load.spritesheet('ship', 'assets/ship.png', 32, 32);
+      this.game.load.spritesheet('ship', 'assets/character.png', 72, 60);
       this.game.load.image('ground', 'assets/ground.png');
       this.game.load.image('background', 'assets/background.png', 3843, 1080);
       this.game.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
@@ -28,6 +33,7 @@ var GameState = function(game) {
 
       // Adding the ship 
       this.ship = this.game.add.sprite(0, 0, 'ship');
+	  shipForVelocity = this.ship;
       this.ship.anchor.setTo(0.5, 0.5);
       this.ship.angle = -90; // Point the ship up
 
@@ -76,6 +82,8 @@ var GameState = function(game) {
 	//create text for UI
 	fuelText = game.add.text(10, 10, "Fuel: " + fuel,  { font: "20px Arial", fill: generateHexColor() });
 	elapsedTimeText = game.add.text(10, 30, "Elapsed time: " + this.game.time.totalElapsedSeconds(),  { font: "20px Arial", fill: generateHexColor() });
+	velocityXText = game.add.text(800, 10, "Horizontal Speed: " + Math.abs(this.ship.body.velocity.x),  { font: "20px Arial", fill: generateHexColor() });
+	velocityYText = game.add.text(800, 30, "Vertical Speed: " + Math.abs(this.ship.body.velocity.y),  { font: "20px Arial", fill: generateHexColor() });
 };
 
 function generateHexColor() { 
@@ -123,6 +131,8 @@ function generateHexColor() {
   function updateUI() {
 	  fuelText.setText("Fuel: " + fuel);
 	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds()));
+	  velocityXText.setText("Horizontal Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.x)));
+	  velocityYText.setText("Vertical Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.y)));
   }
 
   GameState.prototype.update = function() {
