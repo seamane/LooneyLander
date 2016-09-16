@@ -1,7 +1,7 @@
 var GameState = function(game) {
   };
   
-  var fuel = 350;
+  var fuel = 3500000;
   var fuelText;
 
   var elapsedTimeText;
@@ -11,13 +11,14 @@ var GameState = function(game) {
   var velocityYText;
   
   var shipForVelocity;
-
+  
   // To Load images and sounds
   GameState.prototype.preload = function() {
       this.game.load.spritesheet('ship', 'assets/character.png', 72, 60);
       this.game.load.image('ground', 'assets/ground.png');
       this.game.load.image('background', 'assets/background.png', 3843, 1080);
       this.game.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
+      this.game.load.spritesheet('platform', 'assets/platform.png', 136, 12);
   };
 
 
@@ -55,11 +56,29 @@ var GameState = function(game) {
       // Make ship bounce a little
      // this.ship.body.bounce.setTo(0.25, 0.25);
 
+     //creating  landing platform
+  /*    var landingPlatform = this.game.add.sprite(400, 550, 'platform');
+	  this.game.physics.enable(landingPlatform, Phaser.Physics.ARCADE);
+      landingPlatform.body.immovable = true;
+      landingPlatform.body.allowGravity = false;
+      landingPlatform.body.collideWorldBounds = true;
+      landingPlatform.body.checkCollision.down = true;
+      landingPlatform.body.checkCollision.up = true;
+*/
       // Create some ground for the ship to land on
       this.ground = this.game.add.group();
       for(var x = 0; x < this.game.width; x += 32) {
           // Creating multiple ground blocks, and enabling physics on each of them.
           var groundBlock = this.game.add.sprite(x, this.game.height - 32, 'ground');
+          this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+          groundBlock.body.immovable = true;
+          groundBlock.body.allowGravity = false;
+          this.ground.add(groundBlock);
+      }
+
+      for(var x = 400; x < 537; x += 32) {
+          // Creating multiple ground blocks, and enabling physics on each of them.
+          var groundBlock = this.game.add.sprite(x, this.game.height - 550, 'ground');
           this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
           groundBlock.body.immovable = true;
           groundBlock.body.allowGravity = false;
@@ -126,10 +145,11 @@ function generateHexColor() {
       this.ship.body.acceleration.setTo(0, 0);
       this.ship.angle = this.game.rnd.integerInRange(-180, 180);
       this.ship.body.velocity.setTo(this.game.rnd.integerInRange(-100, 100), 0);
+      this.fuel = 3500000;
   };
   
   function updateUI() {
-	  fuelText.setText("Fuel: " + fuel);
+	  this.fuelText.setText("Fuel: " + fuel);
 	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds()));
 	  velocityXText.setText("Horizontal Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.x)));
 	  velocityYText.setText("Vertical Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.y)));
@@ -138,6 +158,7 @@ function generateHexColor() {
   GameState.prototype.update = function() {
       // Collision with ground
       this.game.physics.arcade.collide(this.ship, this.ground);
+      //this.game.physics.arcade.collide(this.ship, this.landingPlatform);
 
       // Keep the ship on the screen
       if (this.ship.x > this.game.width) this.ship.x = 0;
@@ -191,204 +212,3 @@ function generateHexColor() {
   game.state.add('game', GameState, true);
 
   window.focus();
-
-  
-  /*var canvas = document.getElementById("game");
-var context = canvas.getContext("2d");
-
-var spaceship =
-{
-    color: "white",
-    width: 8,
-    height: 22,
-    position:
-    {
-        x: 20,
-        y: 20
-    },
-    velocity:
-    {
-        x: 0,
-        y: 0
-    },
-	thrust:
-	{
-		x: -0.015,
-		y: -0.015
-	},
-    angle: 0,
-    engineOn: false,
-    rotatingLeft: false,
-    rotatingRight: false,
-    crashed: false,
-	angularVelocity: 0.0,
-	angularStepSize: Math.PI / 1440
-}
-
-var stars = [];
-
-function drawStars() 
-{
-  context.save();
-  context.fillStyle = "#111"
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  for (var i = 0; i < stars.length; i++) {
-    var star = stars[i];
-    context.beginPath();
-    context.arc(star.x, star.y, star.radius, 0, 2*Math.PI);
-    context.closePath();
-    context.fillStyle = "rgba(255, 255, 255, " + star.alpha + ")";
-    if (star.decreasing == true)
-    {
-      star.alpha -= star.dRatio;
-      if (star.alpha < 0.1)
-      { star.decreasing = false; }
-    }
-    else
-    {
-      star.alpha += star.dRatio;
-      if (star.alpha > 0.95)
-      { star.decreasing = true; }
-    }
-    context.fill();
-  }
-  context.restore();
-}
-
-function drawSpaceship()
-{
-    context.save();
-    context.beginPath();
-    context.translate(spaceship.position.x, spaceship.position.y);
-    context.rotate(spaceship.angle);
-    context.rect(spaceship.width * -0.5, spaceship.height * -0.5, spaceship.width, spaceship.height);
-    context.fillStyle = spaceship.color;
-    context.fill();
-    context.closePath();
-
-    // Draw the flame if engine is on
-    if(spaceship.engineOn)
-    {
-        context.beginPath();
-        context.moveTo(spaceship.width * -0.5, spaceship.height * 0.5);
-        context.lineTo(spaceship.width * 0.5, spaceship.height * 0.5);
-        context.lineTo(0, spaceship.height * 0.5 + Math.random() * 10);
-        context.lineTo(spaceship.width * -0.5, spaceship.height * 0.5);
-        context.closePath();
-        context.fillStyle = "orange";
-        context.fill();
-    }
-    context.restore();
-}
-
-var gravity = -0.01;
-
-function updateSpaceship()
-{
-    spaceship.position.x += spaceship.velocity.x;
-    spaceship.position.y += spaceship.velocity.y;
-    if(spaceship.rotatingRight)
-    {
-		spaceship.angularVelocity += spaceship.angularStepSize;
-        //spaceship.angle += spaceship.angularVelocity; //Math.PI / 180;
-    }
-    else if(spaceship.rotatingLeft)
-    {
-		spaceship.angularVelocity -= spaceship.angularStepSize;
-        //spaceship.angle += spaceship.angularVelocity; //-= Math.PI / 180;
-    }
-	
-	spaceship.angle += spaceship.angularVelocity;
-
-    if(spaceship.engineOn)
-    {
-        spaceship.velocity.x += spaceship.thrust.x * Math.sin(-spaceship.angle);
-        spaceship.velocity.y += spaceship.thrust.y * Math.cos(spaceship.angle);
-    }
-    spaceship.velocity.y -= gravity;
-}
-
-
-function draw()
-{
-    // Clear entire screen
-    context.clearRect(0, 0, canvas.width, canvas.height);
-	
-	// draw background
-	context.beginPath();
-	context.rect(0, 0, canvas.width, canvas.height);
-	context.fillStyle = "black";
-	context.fill();
-
-    updateSpaceship();
-
-    // Begin drawing
-	drawStars();
-    drawSpaceship();
-    // other draw methods (to add later) 
-
-    requestAnimationFrame(draw);
-}
-
-function keyLetGo(event)
-{
-    console.log(spaceship);
-    switch(event.keyCode)
-    {
-        case 37:
-            // Left Arrow key
-            spaceship.rotatingLeft = false;
-            break;
-        case 39:
-            // Right Arrow key
-            spaceship.rotatingRight = false;
-            break;
-        case 38:
-            // Up Arrow key
-            spaceship.engineOn = false;
-            break;
-    }
-}
-
-document.addEventListener('keyup', keyLetGo);
-
-function keyPressed(event)
-{
-    console.log(spaceship);
-    switch(event.keyCode)
-    {
-        case 37:
-            // Left Arrow key
-            spaceship.rotatingLeft = true;
-            break;
-        case 39:
-            // Right Arrow key
-            spaceship.rotatingRight = true;
-            break;
-        case 38:
-            // Up Arrow key
-            spaceship.engineOn = true;
-            break;
-    }
-}
-
-document.addEventListener('keydown', keyPressed);
-
-function InitStars()
-{
-	for (var i = 0; i < 500; i++) {
-		stars[i] = {
-			x: Math.random() * canvas.width,
-			y: Math.random() * canvas.height,
-			radius: Math.sqrt(Math.random() * 2),
-			alpha: 1.0,
-			decreasing: true,
-			dRatio: Math.random() * 0.05
-		};
-	}
-}
-
-InitStars();
-
-draw();*/
-
