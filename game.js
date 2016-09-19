@@ -184,7 +184,11 @@ GameState.prototype.update = function() {
     var onTheGround = this.ship.body.touching.down;
 
     if (onTheGround) {
-        if (Math.abs(this.ship.body.velocity.y) > 40 || Math.abs(this.ship.body.velocity.x) > 30 || prevVelocity > 20) {
+        if (Math.abs(this.ship.body.velocity.y) > 40 
+          || Math.abs(this.ship.body.velocity.x) > 30 
+          || prevVelocity > 40
+          || this.ship.angle > -70
+          || this.ship.angle < -110) {
             // The ship blows apart if it hits the ground too hard.
             this.getExplosion(this.ship.x, this.ship.y);
             this.resetShip();
