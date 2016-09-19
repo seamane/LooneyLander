@@ -19,6 +19,7 @@ var velocityXText;
 var velocityYText;
   
 var shipForVelocity;
+var pressToStartSprite;
   
 // To Load images and sounds
 GameState.prototype.preload = function() {
@@ -27,8 +28,8 @@ GameState.prototype.preload = function() {
     this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
     this.game.load.spritesheet('platform', 'assets/platform.png', 136, 12);
+    this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
 };
-
 
 GameState.prototype.create = function() {
     // loading background image 
@@ -38,7 +39,7 @@ GameState.prototype.create = function() {
     this.ACCELERATION = 50; // pixels/second/second
     this.MAX_SPEED = 150; // pixels/second
     this.DRAG = 0; // pixels/second
-    this.GRAVITY = 30; // pixels/second/second
+    this.GRAVITY = 20; // pixels/second/second
 
     // Adding the ship 
     this.ship = this.game.add.sprite(0, 0, 'ship');
@@ -111,6 +112,10 @@ GameState.prototype.create = function() {
 	  elapsedTimeText = game.add.text(10, 30, "Elapsed time: " + this.game.time.totalElapsedSeconds(),  { font: "20px Arial", fill: "#FFFFFF" });
 	  velocityXText = game.add.text(800, 10, "Horizontal Speed: " + Math.abs(this.ship.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
 	  velocityYText = game.add.text(800, 30, "Vertical Speed: " + Math.abs(this.ship.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
+
+    //load PressToStart UI
+    pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
+    pressTostartSprite.tint = 0xff00ff;
 };
 
 GameState.prototype.getExplosion = function(x, y) {
@@ -157,6 +162,9 @@ function updateUI() {
 	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds()));
 	  velocityXText.setText("Horizontal Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.x)));
 	  velocityYText.setText("Vertical Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.y)));
+
+
+    //pressTostartSprite.tint = Math.random() * 0xffff00;
 }
 
 //this variable is used to fix the landing bug we had
@@ -171,6 +179,38 @@ GameState.prototype.update = function() {
     if (this.ship.x > this.game.width) this.ship.x = 0;
     if (this.ship.x < 0) this.ship.x = this.game.width;
 
+    
+
+    var onTheGround = this.ship.body.touching.down;
+
+    if (onTheGround) {
+        if (Math.abs(this.ship.body.velocity.y) > 40 || Math.abs(this.ship.body.velocity.x) > 30 || prevVelocity > 20) {
+            // The ship blows apart if it hits the ground too hard.
+            this.getExplosion(this.ship.x, this.ship.y);
+            this.resetShip();
+            currGameState = State.START;
+        } else {
+            // We landed
+            this.ship.body.angularVelocity = 0;
+            this.ship.body.velocity.setTo(0, 0);
+            this.ship.angle = -90;
+        }
+    }
+    
+    updateUI();
+    prevVelocity = this.ship.body.velocity.y;
+
+    if(currGameState == State.START) {
+        if(this.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+            this.resetShip();
+            pressTostartSprite.destroy();
+            currGameState = State.PLAY;
+        }
+        return;
+    }
+
+    //CHECK USER INPUT
+    //ship rotation
     if (this.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
         this.ship.body.angularVelocity = -this.ROTATION_SPEED;
     } 
@@ -181,24 +221,10 @@ GameState.prototype.update = function() {
         this.ship.body.angularVelocity = 0;
     }
 
-    var onTheGround = this.ship.body.touching.down;
-
-    if (onTheGround) {
-        if (Math.abs(this.ship.body.velocity.y) > 20 || Math.abs(this.ship.body.velocity.x) > 30 || prevVelocity > 20) {
-            // The ship blows apart if it hits the ground too hard.
-            this.getExplosion(this.ship.x, this.ship.y);
-            this.resetShip();
-        } else {
-            // We landed
-            this.ship.body.angularVelocity = 0;
-            this.ship.body.velocity.setTo(0, 0);
-            this.ship.angle = -90;
-        }
-    }
 
     if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && fuel > 50 && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 3) {
     		spaceBarPressed = this.game.time.totalElapsedSeconds();
-        this.ship.body.velocity.setTo(0, -180);
+        this.ship.body.velocity.setTo(0, -150);
         this.ship.angle = -90;
         this.ship.frame = 1;
         fuel -= 50;
@@ -217,10 +243,6 @@ GameState.prototype.update = function() {
             this.ship.frame = 0;
         }
     }
-	  
-	  updateUI();
-
-    prevVelocity = this.ship.body.velocity.y;
 };
 
 var game = new Phaser.Game(1800, 1000, Phaser.AUTO, 'game');
