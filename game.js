@@ -99,15 +99,11 @@ var GameState = function(game) {
       this.game.time.advancedTiming = true;
  
 	//create text for UI
-	fuelText = game.add.text(10, 10, "Fuel: " + fuel,  { font: "20px Arial", fill: generateHexColor() });
-	elapsedTimeText = game.add.text(10, 30, "Elapsed time: " + this.game.time.totalElapsedSeconds(),  { font: "20px Arial", fill: generateHexColor() });
-	velocityXText = game.add.text(800, 10, "Horizontal Speed: " + Math.abs(this.ship.body.velocity.x),  { font: "20px Arial", fill: generateHexColor() });
-	velocityYText = game.add.text(800, 30, "Vertical Speed: " + Math.abs(this.ship.body.velocity.y),  { font: "20px Arial", fill: generateHexColor() });
+	fuelText = game.add.text(10, 10, "Fuel: " + fuel,  { font: "20px Arial", fill: "#FFFFFF" });
+	elapsedTimeText = game.add.text(10, 30, "Elapsed time: " + this.game.time.totalElapsedSeconds(),  { font: "20px Arial", fill: "#FFFFFF" });
+	velocityXText = game.add.text(800, 10, "Horizontal Speed: " + Math.abs(this.ship.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
+	velocityYText = game.add.text(800, 30, "Vertical Speed: " + Math.abs(this.ship.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 };
-
-function generateHexColor() { 
-    return '#' + ((0.5 + 0.5 * Math.random()) * 0xFFFFFF << 0).toString(16);
-}
 
   GameState.prototype.getExplosion = function(x, y) {
       var explosion = this.explosionGroup.getFirstDead();
@@ -155,6 +151,8 @@ function generateHexColor() {
 	  velocityYText.setText("Vertical Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.y)));
   }
 
+  var prevVelocity = 0;
+
   GameState.prototype.update = function() {
       // Collision with ground
       this.game.physics.arcade.collide(this.ship, this.ground);
@@ -175,7 +173,7 @@ function generateHexColor() {
       var onTheGround = this.ship.body.touching.down;
 
       if (onTheGround) {
-          if (Math.abs(this.ship.body.velocity.y) > 20 || Math.abs(this.ship.body.velocity.x) > 30) {
+          if (Math.abs(this.ship.body.velocity.y) > 20 || Math.abs(this.ship.body.velocity.x) > 30 || prevVelocity > 20) {
               // The ship blows apart if it hits the ground too hard.
               this.getExplosion(this.ship.x, this.ship.y);
               this.resetShip();
@@ -206,6 +204,8 @@ function generateHexColor() {
       }
 	  
 	  updateUI();
+
+    prevVelocity = this.ship.body.velocity.y;
   };
 
   var game = new Phaser.Game(1800, 1000, Phaser.AUTO, 'game');
