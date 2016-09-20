@@ -7,9 +7,18 @@ var State = {
     END:2
 }
 
+var ThrusterState = {
+    ZERO:0,
+    ONE:1,
+    TWO:2,
+    THREE:3,
+    FOUR:4
+}
+
 var currGameState = State.START;
+var currThrusterState = ThrusterState.ZERO;
   
-var fuel = 3500000;
+var fuel = 2500;
 var fuelText;
 
 var elapsedTimeText;
@@ -20,6 +29,8 @@ var velocityYText;
   
 var shipForVelocity;
 var pressToStartSprite;
+
+var startTime;
   
 // To Load images and sounds
 GameState.prototype.preload = function() {
@@ -32,15 +43,15 @@ GameState.prototype.preload = function() {
 };
 
 GameState.prototype.create = function() {
-    game.time.events.loop(Phaser.Timer.SECOND * 2, updateUIText, this);
+    game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateUIText, this);
     // loading background image 
     game.add.sprite(0, 0, 'background');
     // Define motion constants
     this.ROTATION_SPEED = 70; // degrees/second
-    this.ACCELERATION = 50; // pixels/second/second
+    this.ACCELERATION = 20; // pixels/second/second
     this.MAX_SPEED = 150; // pixels/second
     this.DRAG = 0; // pixels/second
-    this.GRAVITY = 20; // pixels/second/second
+    this.GRAVITY = 9.8; // pixels/second/second
 
     // Adding the ship 
     this.ship = this.game.add.sprite(0, 0, 'ship');
@@ -237,13 +248,15 @@ GameState.prototype.create = function() {
  
 	  //create text for UI
 	  fuelText = game.add.text(10, 10, "Fuel: " + fuel,  { font: "20px Arial", fill: "#FFFFFF" });
-	  elapsedTimeText = game.add.text(10, 30, "Elapsed time: " + this.game.time.totalElapsedSeconds(),  { font: "20px Arial", fill: "#FFFFFF" });
+	  elapsedTimeText = game.add.text(10, 30, "Elapsed time: 0",  { font: "20px Arial", fill: "#FFFFFF" });
 	  velocityXText = game.add.text(800, 10, "Horizontal Speed: " + Math.abs(this.ship.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
 	  velocityYText = game.add.text(800, 30, "Vertical Speed: " + Math.abs(this.ship.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 
     //load PressToStart UI
     pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
     pressTostartSprite.tint = 0xff00ff;
+
+    startTime = this.game.time.totalElapsedSeconds();
 };
 
 GameState.prototype.getExplosion = function(x, y) {
@@ -287,14 +300,15 @@ GameState.prototype.resetShip = function() {
   
 function updateUI() {
 	  this.fuelText.setText("Fuel: " + fuel);
-	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds()));
+	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
 	  velocityXText.setText("Horizontal Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.x)));
 	  velocityYText.setText("Vertical Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.y)));
-      //pressTostartSprite.tint = Math.random() * 0xffff00;
 }
+
 function updateUIText() {
-pressTostartSprite.tint = Math.random() * 0xffff00;
+    pressTostartSprite.tint = Math.random() * 0xffffff;
 }
+
 //this variable is used to fix the landing bug we had
 var prevVelocity = 0;
 
@@ -313,7 +327,7 @@ GameState.prototype.update = function() {
 
     if (onTheGround) {
         if (Math.abs(this.ship.body.velocity.y) > 40 
-          || Math.abs(this.ship.body.velocity.x) > 30 
+          || Math.abs(this.ship.body.velocity.x) > 10 
           || prevVelocity > 40
           || this.ship.angle > -70
           || this.ship.angle < -110) {
@@ -321,6 +335,8 @@ GameState.prototype.update = function() {
             this.getExplosion(this.ship.x, this.ship.y);
             this.resetShip();
             currGameState = State.START;
+            pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
+            startTime = this.game.time.totalElapsedSeconds();
         } else {
             // We landed
             this.ship.body.angularVelocity = 0;
@@ -337,6 +353,7 @@ GameState.prototype.update = function() {
             this.resetShip();
             pressTostartSprite.destroy();
             currGameState = State.PLAY;
+            startTime = this.game.time.totalElapsedSeconds();
         }
         return;
     }
@@ -354,14 +371,17 @@ GameState.prototype.update = function() {
     }
 
 
-    if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && fuel > 50 && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 3) {
+    if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) 
+        && fuel > 50 
+        && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 3) {
     		spaceBarPressed = this.game.time.totalElapsedSeconds();
-        this.ship.body.velocity.setTo(0, -150);
+        this.ship.body.velocity.setTo(0, -80);
         this.ship.angle = -90;
         this.ship.frame = 1;
         fuel -= 50;
     }
-    else if (this.input.keyboard.isDown(Phaser.Keyboard.UP) && fuel > 0) {
+    else if (this.input.keyboard.isDown(Phaser.Keyboard.UP) 
+        && fuel > 0) {
         this.ship.body.acceleration.x = Math.cos(this.ship.rotation) * this.ACCELERATION;
         this.ship.body.acceleration.y = Math.sin(this.ship.rotation) * this.ACCELERATION;
         this.ship.frame = 1;
