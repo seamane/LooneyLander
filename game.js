@@ -37,6 +37,7 @@ var startTime;
 GameState.prototype.preload = function() {
     this.game.load.spritesheet('ship', 'assets/character.png', 72, 60);
     this.game.load.image('ground', 'assets/ground.png');
+    this.game.load.image('roof', 'assets/ground.png');
     this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
     this.game.load.spritesheet('platform', 'assets/platform.png', 136, 12);
@@ -237,7 +238,7 @@ GameState.prototype.create = function() {
 //Roof
     for(var x = 0; x < 1800; x += 32) {
         // Creating multiple ground blocks, and enabling physics on each of them.
-        var roofBlock = this.game.add.sprite(x, this.game.height - 999, 'ground');
+        var roofBlock = this.game.add.sprite(x, this.game.height - 999, 'roof');
         this.game.physics.enable(roofBlock, Phaser.Physics.ARCADE);
         roofBlock.body.immovable = true;
         roofBlock.body.allowGravity = false;
