@@ -234,6 +234,15 @@ GameState.prototype.create = function() {
         groundBlock.body.allowGravity = false;
         this.ground.add(groundBlock);
     }
+//Roof
+    for(var x = 0; x < 1800; x += 32) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var roofBlock = this.game.add.sprite(x, this.game.height - 999, 'ground');
+        this.game.physics.enable(roofBlock, Phaser.Physics.ARCADE);
+        roofBlock.body.immovable = true;
+        roofBlock.body.allowGravity = false;
+        this.ground.add(roofBlock);
+    }
     // Create a group for explosions
     this.explosionGroup = this.game.add.group();
 
