@@ -302,7 +302,7 @@ GameState.prototype.getExplosion = function(x, y) {
 GameState.prototype.resetShip = function() {
 
     this.ship.x = 500;
-    this.ship.y = 32;
+    this.ship.y = 64;
     this.ship.body.acceleration.setTo(0, 0);
     this.ship.angle = this.game.rnd.integerInRange(-180, 180);
     this.ship.body.velocity.setTo(this.game.rnd.integerInRange(-100, 100), 0);
