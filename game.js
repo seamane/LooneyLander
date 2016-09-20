@@ -32,6 +32,7 @@ GameState.prototype.preload = function() {
 };
 
 GameState.prototype.create = function() {
+    game.time.events.loop(Phaser.Timer.SECOND * 2, updateUIText, this);
     // loading background image 
     game.add.sprite(0, 0, 'background');
     // Define motion constants
@@ -289,11 +290,11 @@ function updateUI() {
 	  elapsedTimeText.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds()));
 	  velocityXText.setText("Horizontal Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.x)));
 	  velocityYText.setText("Vertical Speed: " + Math.abs(Math.trunc(this.shipForVelocity.body.velocity.y)));
-
-
-    //pressTostartSprite.tint = Math.random() * 0xffff00;
+      //pressTostartSprite.tint = Math.random() * 0xffff00;
 }
-
+function updateUIText() {
+pressTostartSprite.tint = Math.random() * 0xffff00;
+}
 //this variable is used to fix the landing bug we had
 var prevVelocity = 0;
 
