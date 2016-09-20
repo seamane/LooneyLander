@@ -65,15 +65,7 @@ GameState.prototype.create = function() {
       // Make ship bounce a little
      // this.ship.body.bounce.setTo(0.25, 0.25);
 
-     //creating  landing platform
-  /*    var landingPlatform = this.game.add.sprite(400, 550, 'platform');
-	  this.game.physics.enable(landingPlatform, Phaser.Physics.ARCADE);
-      landingPlatform.body.immovable = true;
-      landingPlatform.body.allowGravity = false;
-      landingPlatform.body.collideWorldBounds = true;
-      landingPlatform.body.checkCollision.down = true;
-      landingPlatform.body.checkCollision.up = true;
-*/
+
       // Create some ground for the ship to land on
     this.ground = this.game.add.group();
     for(var x = 0; x < this.game.width; x += 32) {
@@ -84,16 +76,151 @@ GameState.prototype.create = function() {
         groundBlock.body.allowGravity = false;
         this.ground.add(groundBlock);
     }
-
-    for(var x = 400; x < 537; x += 32) {
+//1st platform
+    for(var x = 0; x < 50; x += 16) {
         // Creating multiple ground blocks, and enabling physics on each of them.
-        var groundBlock = this.game.add.sprite(x, this.game.height - 550, 'ground');
+        var groundBlock = this.game.add.sprite(x, this.game.height - 415, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//2nd platform
+    for(var x = 65; x < 76; x += 8) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 365, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//3rd platform
+    for(var x = 96; x < 110; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 315, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//4th platform
+    for(var x = 272; x < 300; x += 16) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 246, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//5th platform
+    for(var x = 320; x < 322; x += 16) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 288, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//6th platform
+    for(var x = 380; x < 382; x += 16) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 288, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//7th platform
+    for(var x = 415; x < 500; x += 16) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 185, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+ //8th platform
+    for(var x = 820; x < 945; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 318, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+ //9th platform
+    for(var x = 965; x < 995; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 120, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//10th platform
+    for(var x = 1030; x < 1125; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 235, 'ground');
         this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
         groundBlock.body.immovable = true;
         groundBlock.body.allowGravity = false;
         this.ground.add(groundBlock);
     }
 
+//11th platform
+    for(var x = 1150; x < 1177; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 65, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//12th platform
+    for(var x = 1255; x < 1325; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 317, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//13th platform
+    for(var x = 1360; x < 1470; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 169, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//14th platform
+    for(var x = 1594; x < 1634; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 127, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//15th platform
+    for(var x = 1664; x < 1672; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 82, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
+//16th platform
+    for(var x = 1700; x < 1800; x += 4) {
+        // Creating multiple ground blocks, and enabling physics on each of them.
+        var groundBlock = this.game.add.sprite(x, this.game.height - 316, 'ground');
+        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+        groundBlock.body.immovable = true;
+        groundBlock.body.allowGravity = false;
+        this.ground.add(groundBlock);
+    }
     // Create a group for explosions
     this.explosionGroup = this.game.add.group();
 
@@ -173,7 +300,7 @@ var prevVelocity = 0;
 GameState.prototype.update = function() {
     // Collision with ground
     this.game.physics.arcade.collide(this.ship, this.ground);
-    //this.game.physics.arcade.collide(this.ship, this.landingPlatform);
+    
 
     // Keep the ship on the screen
     if (this.ship.x > this.game.width) this.ship.x = 0;
