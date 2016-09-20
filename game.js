@@ -17,8 +17,9 @@ var ThrusterState = {
 
 var currGameState = State.START;
 var currThrusterState = ThrusterState.ZERO;
-  
-var fuel = 2500;
+
+var startingFuel = 2500;  
+var fuel = startingFuel;
 var fuelText;
 
 var elapsedTimeText;
@@ -295,7 +296,7 @@ GameState.prototype.resetShip = function() {
     this.ship.body.acceleration.setTo(0, 0);
     this.ship.angle = this.game.rnd.integerInRange(-180, 180);
     this.ship.body.velocity.setTo(this.game.rnd.integerInRange(-100, 100), 0);
-    this.fuel = 3500000;
+	fuel = startingFuel;
 };
   
 function updateUI() {
