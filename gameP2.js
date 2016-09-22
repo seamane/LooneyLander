@@ -36,11 +36,8 @@ var startTime;
 var starfield;//background
 var cursors;//for arrow key input
 
-//temp planet position for testing gravity
-var gx = 500;
-var gy = 500;
-
 var planets = [];
+var acceptableLandingAngle = 30;//acceptable landing angle when landing on planet, in degrees
 
 function create() {
     game.world.setBounds(0, 0, 3843, 1080);
@@ -66,21 +63,19 @@ function create() {
 	
 	game.physics.p2.updateBoundsCollisionGroup();
 	
-///Fuel//
-var fuel = game.add.group();
-fuel.enableBody = true;
-fuel.physicsBodyType = Phaser.Physics.P2JS;
-for (var i = 0; i <10; i++)
-{
-	var fuelCollection = fuel.create(game.world.randomX, game.world.randomY, 'fuel');
-	fuelCollection.body.setRectangle(64,64);
-	fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
-	fuelCollection.body.collides([playerCollisionGroup]);
+	///Fuel//
+	var fuel = game.add.group();
+	fuel.enableBody = true;
+	fuel.physicsBodyType = Phaser.Physics.P2JS;
+	for (var i = 0; i < 10; i++)
+	{
+		var fuelCollection = fuel.create(game.world.randomX, game.world.randomY, 'fuel');
+		fuelCollection.body.setRectangle(64,64);
+		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
+		fuelCollection.body.collides([playerCollisionGroup]);
 
-}
-/////////
-
-
+	}
+	/////////
 
 	var people = game.add.group();
 	people.enableBody = true;
@@ -115,6 +110,7 @@ for (var i = 0; i <10; i++)
 	UIText.velocityX.fixedToCamera = true;
 	UIText.velocityY.fixedToCamera = true;
 	UIText.numCollected.fixedToCamera = true;
+	
     //load PressToStart UI
    // pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
    // pressTostartSprite.tint = 0xff00ff;
@@ -197,7 +193,21 @@ function hitPlanet(body1,body2) {
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
 	
 	//check if player landed on planet with his feet
-	body1.sprite.rotation - (Math.PI / 2);
+	var upVectorRelativeToPlanet = new Phaser.Point(player.sprite.position.x - body2.sprite.position.x,player.sprite.position.y - body2.sprite.position.y);
+	upVectorRelativeToPlanet = upVectorRelativeToPlanet.normalize();
+	var playerUpVector = new Phaser.Point(Math.cos(player.sprite.rotation - (Math.PI / 2)), Math.sin(player.sprite.rotation - (Math.PI / 2))); 
+	playerUpVector = playerUpVector.normalize();
+	var landingAngle = Math.acos(upVectorRelativeToPlanet.dot(playerUpVector));
+	landingAngle = Math.abs(landingAngle * 180.0 / Math.PI);//radians to degrees
+	
+	if(landingAngle > acceptableLandingAngle) {
+		//player loses a person they have collected
+		if(player.numCollected > 0) {
+			player.numCollected -= 1;
+			
+			//spawn that person(similar to sonic coins)
+		}
+	}
 }
 
 function hitPerson(body1,body2) {
