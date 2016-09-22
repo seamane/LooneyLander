@@ -25,15 +25,22 @@ var UIText = {
 	numCollected:null
 }
 
+var playerCollisionGroup;
+var peopleCollisionGroup;
+var planetCollisionGroup;
+var fuelCollisionGroup;
+
 var spaceBarPressed = -3.0;
 var startTime;
 
-var starfield;
-var cursors;
-var chain = [];
+var starfield;//background
+var cursors;//for arrow key input
 
+//temp planet position for testing gravity
 var gx = 500;
 var gy = 500;
+
+var planets = [];
 
 function create() {
     game.world.setBounds(0, 0, 3843, 1080);
@@ -50,10 +57,12 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
 	
-	var playerCollisionGroup = game.physics.p2.createCollisionGroup();
-	var peopleCollisionGroup = game.physics.p2.createCollisionGroup();
-	var platformCollisionGroup = game.physics.p2.createCollisionGroup();
-	var fuelCollisionGroup = game.physics.p2.createCollisionGroup();
+
+	playerCollisionGroup = game.physics.p2.createCollisionGroup();
+	peopleCollisionGroup = game.physics.p2.createCollisionGroup();
+	planetCollisionGroup = game.physics.p2.createCollisionGroup();
+	fuelCollisionGroup = game.physics.p2.createCollisionGroup();
+
 	
 	game.physics.p2.updateBoundsCollisionGroup();
 	
@@ -81,7 +90,7 @@ for (var i = 0; i <10; i++)
 		var person = people.create(game.world.randomX, game.world.randomY, 'bob');
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
-		person.body.collides([playerCollisionGroup,platformCollisionGroup]);
+		person.body.collides([playerCollisionGroup,planetCollisionGroup]);
 	}
 
 	//init player
@@ -89,11 +98,11 @@ for (var i = 0; i <10; i++)
     game.physics.p2.enable(player.sprite);
     game.camera.follow(player.sprite);
 	player.sprite.body.setCollisionGroup(playerCollisionGroup);
-	player.sprite.body.collides(platformCollisionGroup);
+	player.sprite.body.collides(planetCollisionGroup,hitPlanet,this);
 	player.sprite.body.collides(peopleCollisionGroup,hitPerson,this);
 	player.sprite.body.collides(fuelCollisionGroup,hitFuel,this);
 	
-	createPlatforms(platformCollisionGroup,playerCollisionGroup,peopleCollisionGroup);
+	createPlatforms(planetCollisionGroup,playerCollisionGroup,peopleCollisionGroup);
 	
 	//create text for UI
 	UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Arial", fill: "#FFFFFF" });
@@ -113,53 +122,85 @@ for (var i = 0; i <10; i++)
     startTime = this.game.time.totalElapsedSeconds();
 }
 
-function createPlatforms(plat,play,peop)
+function createPlatforms()
 {
-	//create platforms
-	var platforms = game.add.group();
-	platforms.enableBody = true;
-	platforms.physicsBodyType = Phaser.Physics.P2JS;
-	var platform = platforms.create(600, 200, 'platform');
-	platform.body.setRectangle(126,12);
-	platform.body.setCollisionGroup(plat);
-	platform.body.collides([play,peop]);
-    platform.body.static = true;
-    platform.body.allowGravity = false;
+	var planetsGroup = game.add.group();
+	planetsGroup.enableBody = true;
+	planetsGroup.physicsBodyType = Phaser.Physics.P2JS;
 	
-	platform = platforms.create(30, 1000, 'platform');
-	platform.body.setRectangle(126,12);
-	platform.body.setCollisionGroup(plat);
-	platform.body.collides([play,peop]);
-    platform.body.static = true;
-    platform.body.allowGravity = false;
+	var planet = new Object();
+	planet.radius = 100;
+	planet.gravitationalRadius = 400;
+	planet.gravity = 200;
+	planet.sprite = planetsGroup.create(600, 200, 'platform');
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
 	
-	platform = platforms.create(1300, 400, 'platform');
-	platform.body.rotation = -Math.PI / 4.0;
-	platform.body.setRectangle(126,12);
-	platform.body.setCollisionGroup(plat);
-	platform.body.collides([play,peop]);
-    platform.body.static = true;
-    platform.body.allowGravity = false;
+	planet = new Object();
+	planet.radius = 100;
+	planet.gravitationalRadius = 400;
+	planet.gravity = 200;
+	planet.sprite = planetsGroup.create(30, 1000, 'platform');
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
 	
-	platform = platforms.create(800, 600, 'platform');
-	platform.body.setRectangle(126,12);
-	platform.body.rotation = -Math.PI / 2.0;
-	platform.body.setCollisionGroup(plat);
-	platform.body.collides([play,peop]);
-    platform.body.static = true;
-    platform.body.allowGravity = false;
+	planet = new Object();
+	planet.radius = 100;
+	planet.gravitationalRadius = 400;
+	planet.gravity = 200;
+	planet.sprite = planetsGroup.create(1300, 400, 'platform');
+	planet.sprite.body.rotation = -Math.PI / 4.0;
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
 	
-	platform = platforms.create(1500, 1000, 'platform');
-	platform.body.setRectangle(126,12);
-	platform.body.setCollisionGroup(plat);
-	platform.body.collides(play);
-    platform.body.static = true;
-    platform.body.allowGravity = false;
+	planet = new Object();
+	planet.radius = 100;
+	planet.gravitationalRadius = 400;
+	planet.gravity = 200;
+	planet.sprite = planetsGroup.create(800, 600, 'platform');
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.rotation = -Math.PI / 2.0;
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
+	
+	planet = new Object();
+	planet.radius = 100;
+	planet.gravitationalRadius = 400;
+	planet.gravity = 200;
+	planet.sprite = planetsGroup.create(1500, 1000, 'platform');
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
+}
+
+function hitPlanet(body1,body2) {
+	//  body1 is the space player (as it's the body that owns the callback)
+    //  body2 is the body it impacted with, in this case our planet
+    //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
+	
 }
 
 function hitPerson(body1,body2) {
 	//  body1 is the space player (as it's the body that owns the callback)
-    //  body2 is the body it impacted with, in this case our panda
+    //  body2 is the body it impacted with, in this case our person
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
 	body2.sprite.body = null;
 	body2.sprite.destroy();
@@ -224,27 +265,21 @@ function update() {
         //starfield.tilePosition.y -= (player.sprite.body.velocity.y * game.time.physicsElapsed);
     }
 
-	/*var myPoint = new Phaser.Point(player.sprite.x - gx,player.sprite.y - gy);
-	var newPoint = new Phaser.Point();
-	Phaser.Point.normalize(myPoint,newPoint);
-	var c = Math.acos(newPoint.x) * 9.8;
-	var s = Math.asin(newPoint.y) * 9.8;
+	for(var i = 0; i < planets.length; ++i)
+	{
+		var vecToPlanet = new Phaser.Point(planets[i].sprite.position.x - player.sprite.x, planets[i].sprite.position.y - player.sprite.y);
+		var distToPlanet = vecToPlanet.getMagnitude();
+		if(distToPlanet < planets[i].gravitationalRadius)
+		{
+			var xDirection = vecToPlanet.x / distToPlanet;
+			var yDirection = vecToPlanet.y / distToPlanet;
+			var xForce = xDirection * planets[i].gravity;
+			var yForce = yDirection * planets[i].gravity;
 	
-	if(c < 0){
-		player.sprite.body.thrustLeft(c);
+			player.sprite.body.force.x += xForce;
+			player.sprite.body.force.y += yForce;
+		}
 	}
-	else {
-		player.sprite.body.thrustRight(c);
-	}
-	if(s < 0) {
-		player.sprite.body.thrust(c);
-	}
-	else {
-		player.sprite.body.reverse(c);
-	}
-	
-	player.sprite.body.thrust(c);
-	player.sprite.body.thrust(s);*/
 	
 	updateUI();
 }
