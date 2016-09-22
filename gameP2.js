@@ -174,6 +174,8 @@ function hitPlanet(body1,body2) {
     //  body2 is the body it impacted with, in this case our planet
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
 	
+	//check if player landed on planet with his feet
+	body1.sprite.rotation - (Math.PI / 2);
 }
 
 function hitPerson(body1,body2) {
