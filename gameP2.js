@@ -90,6 +90,7 @@ function create() {
     startTime = this.game.time.totalElapsedSeconds();
 }
 
+//the function parameters are all of the collision groups
 function createPlatforms(plat,play,peop)
 {
 	//create platforms
@@ -192,11 +193,14 @@ function update() {
         //starfield.tilePosition.y -= (player.sprite.body.velocity.y * game.time.physicsElapsed);
     }
 
-	/*var myPoint = new Phaser.Point(player.sprite.x - gx,player.sprite.y - gy);
-	var newPoint = new Phaser.Point();
-	Phaser.Point.normalize(myPoint,newPoint);
-	var c = Math.acos(newPoint.x) * 9.8;
-	var s = Math.asin(newPoint.y) * 9.8;
+	var vecToPlanet = new Phaser.Point(gx - player.sprite.x, gy - player.sprite.y);
+	var distToPlanet = vecToPlanet.getMagnitude();
+	var tempX = vecToPlanet.x / distToPlanet;
+	var tempY = vecToPlanet.y / distToPlanet;
+	var cos = Math.acos(tempX);
+	var sin = Math.asin(tempY);
+	var c = tempX * 9.8;
+	var s = tempY * 9.8;
 	
 	if(c < 0){
 		player.sprite.body.thrustLeft(c);
@@ -211,8 +215,8 @@ function update() {
 		player.sprite.body.reverse(c);
 	}
 	
-	player.sprite.body.thrust(c);
-	player.sprite.body.thrust(s);*/
+	//player.sprite.body.thrust(c);
+	//player.sprite.body.thrust(s);
 	
 	updateUI();
 }
