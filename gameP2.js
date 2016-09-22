@@ -3,6 +3,7 @@ var game = new Phaser.Game(1800, 1080, Phaser.AUTO, 'phaser-example', { preload:
 function preload() {
     this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.image('bob', 'assets/BobSprite.png', 72, 72);
+    this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
     this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
@@ -38,6 +39,7 @@ var cursors;//for arrow key input
 
 var planets = [];
 var acceptableLandingAngle = 30;//acceptable landing angle when landing on planet, in degrees
+var maxLandingVelocitySquared = 40000;//equivalent to 100 velocity
 
 function create() {
     game.world.setBounds(0, 0, 3843, 1080);
@@ -89,7 +91,7 @@ function create() {
 	}
 
 	//init player
-    player.sprite = game.add.sprite(50, 945, 'player');
+    player.sprite = game.add.sprite(50, 800, 'player');
     game.physics.p2.enable(player.sprite);
     game.camera.follow(player.sprite);
 	player.sprite.body.setCollisionGroup(playerCollisionGroup);
@@ -162,10 +164,10 @@ function createPlatforms()
 	planets[planets.length] = planet;
 	
 	planet = new Object();
-	planet.radius = 100;
+	planet.radius = 210;
 	planet.gravitationalRadius = 400;
-	planet.gravity = 200;
-	planet.sprite = planetsGroup.create(800, 600, 'platform');
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(800, 600, 'planet2');
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.rotation = -Math.PI / 2.0;
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
@@ -200,7 +202,8 @@ function hitPlanet(body1,body2) {
 	var landingAngle = Math.acos(upVectorRelativeToPlanet.dot(playerUpVector));
 	landingAngle = Math.abs(landingAngle * 180.0 / Math.PI);//radians to degrees
 	
-	if(landingAngle > acceptableLandingAngle) {
+	if(landingAngle > acceptableLandingAngle) { 
+		//|| (player.sprite.body.velocity.x * player.sprite.body.velocity.x + player.sprite.body.velocity.y * player.sprite.body.velocity.y) > maxLandingVelocitySquared) {
 		//player loses a person they have collected
 		if(player.numCollected > 0) {
 			player.numCollected -= 1;
@@ -258,8 +261,8 @@ function update() {
 	}
 	else if(this.game.time.totalElapsedSeconds() - spaceBarPressed <= 0.1)
 	{
-		player.sprite.body.force.x = Math.cos(player.spaceBarAngle) * 6000;    // accelerateToObject 
-		player.sprite.body.force.y = Math.sin(player.spaceBarAngle) * 6000;
+		player.sprite.body.force.x = Math.cos(player.spaceBarAngle) * 4000;    // accelerateToObject 
+		player.sprite.body.force.y = Math.sin(player.spaceBarAngle) * 4000;
         player.sprite.frame = 1;
 	}
 	else
