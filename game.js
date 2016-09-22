@@ -6,7 +6,7 @@ var State = {
     PLAY:1,
     END:2
 }
-
+/*
 var ThrusterState = {
     ZERO:0,
     ONE:1,
@@ -14,9 +14,9 @@ var ThrusterState = {
     THREE:3,
     FOUR:4
 }
-
+*/
 var currGameState = State.START;
-var currThrusterState = ThrusterState.ZERO;
+//var currThrusterState = ThrusterState.ZERO;
 
 var startingFuel = 2500;  
 var fuel = startingFuel;
@@ -32,6 +32,8 @@ var shipForVelocity;
 var pressToStartSprite;
 
 var startTime;
+
+var chain = [];//first in chain is always
   
 // To Load images and sounds
 GameState.prototype.preload = function() {
@@ -42,6 +44,7 @@ GameState.prototype.preload = function() {
     this.game.load.spritesheet('explosion', 'assets/explosion.png', 128, 128);
     this.game.load.spritesheet('platform', 'assets/platform.png', 136, 12);
     this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
+    this.game.load.image('bob', 'assets/BobSprite.png', 16, 16);
 };
 
 GameState.prototype.create = function() {
@@ -50,16 +53,19 @@ GameState.prototype.create = function() {
     game.add.sprite(0, 0, 'background');
     // Define motion constants
     this.ROTATION_SPEED = 70; // degrees/second
-    this.ACCELERATION = 20; // pixels/second/second
-    this.MAX_SPEED = 150; // pixels/second
+    this.ACCELERATION = 2000; // pixels/second/second
+    this.MAX_SPEED = 1050; // pixels/second
     this.DRAG = 0; // pixels/second
-    this.GRAVITY = 9.8; // pixels/second/second
+    this.GRAVITY = 0.8; // pixels/second/second
 
     // Adding the ship 
     this.ship = this.game.add.sprite(0, 0, 'ship');
     shipForVelocity = this.ship;
     this.ship.anchor.setTo(0.5, 0.5);
     this.ship.angle = -90; // Point the ship up
+	
+	//add ship to chain
+	chain[0] = this.ship;
 
     // Enabling physics on the ship
     this.game.physics.enable(this.ship, Phaser.Physics.ARCADE);
@@ -386,7 +392,7 @@ GameState.prototype.update = function() {
         && fuel > 50 
         && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 3) {
     		spaceBarPressed = this.game.time.totalElapsedSeconds();
-        this.ship.body.velocity.setTo(0, -80);
+        this.ship.body.velocity.setTo(0, 0);
         this.ship.angle = -90;
         this.ship.frame = 1;
         fuel -= 50;
