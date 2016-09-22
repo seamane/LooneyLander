@@ -5,6 +5,7 @@ function preload() {
     this.game.load.image('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
+    this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
 
 }
 
@@ -52,9 +53,26 @@ function create() {
 	var playerCollisionGroup = game.physics.p2.createCollisionGroup();
 	var peopleCollisionGroup = game.physics.p2.createCollisionGroup();
 	var platformCollisionGroup = game.physics.p2.createCollisionGroup();
+	var fuelCollisionGroup = game.physics.p2.createCollisionGroup();
 	
 	game.physics.p2.updateBoundsCollisionGroup();
 	
+///Fuel//
+var fuel = game.add.group();
+fuel.enableBody = true;
+fuel.physicsBodyType = Phaser.Physics.P2JS;
+for (var i = 0; i <10; i++)
+{
+	var fuelCollection = fuel.create(game.world.randomX, game.world.randomY, 'fuel');
+	fuelCollection.body.setRectangle(64,64);
+	fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
+	fuelCollection.body.collides([playerCollisionGroup]);
+
+}
+/////////
+
+
+
 	var people = game.add.group();
 	people.enableBody = true;
     people.physicsBodyType = Phaser.Physics.P2JS;
@@ -73,6 +91,7 @@ function create() {
 	player.sprite.body.setCollisionGroup(playerCollisionGroup);
 	player.sprite.body.collides(platformCollisionGroup);
 	player.sprite.body.collides(peopleCollisionGroup,hitPerson,this);
+	player.sprite.body.collides(fuelCollisionGroup,hitFuel,this);
 	
 	createPlatforms(platformCollisionGroup,playerCollisionGroup,peopleCollisionGroup);
 	
@@ -145,6 +164,15 @@ function hitPerson(body1,body2) {
 	body2.sprite.body = null;
 	body2.sprite.destroy();
 	player.numCollected += 1;
+}
+
+function hitFuel(body1,body2) {
+	//  body1 is the space player (as it's the body that owns the callback)
+    //  body2 is the body it impacted with, in this case our panda
+    //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
+	body2.sprite.body = null;
+	body2.sprite.destroy();
+	player.fuel += 100;
 }
 
 function update() {
