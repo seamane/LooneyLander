@@ -82,7 +82,11 @@ function create() {
 	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
-
+	UIText.fuel.fixedToCamera = true;
+	UIText.time.fixedToCamera = true;
+	UIText.velocityX.fixedToCamera = true;
+	UIText.velocityY.fixedToCamera = true;
+	UIText.numCollected.fixedToCamera = true;
     //load PressToStart UI
    // pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
    // pressTostartSprite.tint = 0xff00ff;
