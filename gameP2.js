@@ -179,7 +179,7 @@ function create() {
 	UIText.velocityY.fixedToCamera = true;
 	UIText.numCollected.fixedToCamera = true;
 	UIText.endOfGame.fixedToCamera = true;
-	UIText.endOfGame.visibility = false;
+	UIText.endOfGame.visible = false;
 	
     //load PressToStart UI
    // pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
@@ -298,7 +298,7 @@ function hitPlanet(body1,body2) {
 
 function hitEndPoint(body1,body2) {
 	currGameState = GameState.END;
-	UIText.endOfGame.visibility = true;
+	UIText.endOfGame.visible = true;
 }
 
 function hitPerson(body1,body2) {
@@ -347,7 +347,7 @@ function update() {
         player.sprite.frame = 1;
 		player.fuel -= 1;
     }
-	else if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+	else if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 0.1)
 	{
     	spaceBarPressed = this.game.time.totalElapsedSeconds();
 		player.spaceBarAngle = player.sprite.rotation - (Math.PI / 2);
@@ -400,6 +400,6 @@ function updateUI() {
 	UIText.velocityY.setText("Vertical Speed: " + (Math.trunc(-player.sprite.body.velocity.y)));
 	UIText.numCollected.setText("Rescued: " + player.numCollected);
 	if(currGameState != GameState.END) {
-		UIText.endOfGame.visibility = false;
+		UIText.endOfGame.visible = false;
 	}
 }
