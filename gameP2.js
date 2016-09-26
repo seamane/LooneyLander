@@ -1,6 +1,7 @@
 var game = new Phaser.Game(1800, 1080, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
 
 function preload() {
+    this.game.load.audio('bgm', 'assets/sounds/BGM.wav');
     this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.image('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
@@ -25,6 +26,7 @@ var UIText = {
 	time:null,
 	numCollected:null
 }
+var bgm;
 
 var playerCollisionGroup;
 var peopleCollisionGroup;
@@ -43,7 +45,7 @@ var maxLandingVelocitySquared = 10000;//equivalent to 100 velocity
 
 function create() {
     game.world.setBounds(0, 0, 3843, 1080);
-
+    bgm = game.add.audio('bgm');
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.defaultRestitution = 0.8;
     game.physics.p2.gravity.y = 0;
@@ -62,9 +64,9 @@ function create() {
 	planetCollisionGroup = game.physics.p2.createCollisionGroup();
 	fuelCollisionGroup = game.physics.p2.createCollisionGroup();
 
-	
+	game.sound.setDecodedCallback(bgm, start, this);
 	game.physics.p2.updateBoundsCollisionGroup();
-	
+
 	///Fuel//
 	function createFuel()
 	{
@@ -173,7 +175,9 @@ function create() {
 
     startTime = this.game.time.totalElapsedSeconds();
 }
-
+function start() {
+    bgm.loopFull(0.6);
+}
 function createPlanets()
 {
 	var planetsGroup = game.add.group();
