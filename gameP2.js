@@ -113,7 +113,7 @@ function create() {
 	player.sprite.body.collides(peopleCollisionGroup,hitPerson,this);
 	player.sprite.body.collides(fuelCollisionGroup,hitFuel,this);
 	
-	createPlatforms(planetCollisionGroup,playerCollisionGroup,peopleCollisionGroup);
+	createPlanets();
 	createFuel(playerCollisionGroup);
 	createPeople(playerCollisionGroup, planetCollisionGroup);
 	
@@ -136,7 +136,7 @@ function create() {
     startTime = this.game.time.totalElapsedSeconds();
 }
 
-function createPlatforms()
+function createPlanets()
 {
 	var planetsGroup = game.add.group();
 	planetsGroup.enableBody = true;
