@@ -71,8 +71,21 @@ function create() {
 	var fuel = game.add.group();
 	fuel.enableBody = true;
 	fuel.physicsBodyType = Phaser.Physics.P2JS;
+	///For 1st Planet///
 		var fuelCollection = fuel.create(810, 360, 'fuel');
 		fuelCollection.body.setRectangle(64,64);
+		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
+		fuelCollection.body.collides([playerCollisionGroup]);
+	///For 1st TOP Planet///
+		var fuelCollection = fuel.create(870, 160, 'fuel');
+		fuelCollection.body.setRectangle(64,64);
+		fuelCollection.body.rotation = -0.53;
+		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
+		fuelCollection.body.collides([playerCollisionGroup]);
+	///For 2nd Bottom Planet///
+		var fuelCollection = fuel.create(1500, 900, 'fuel');
+		fuelCollection.body.setRectangle(64,64);
+		fuelCollection.body.rotation = -0.53;
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
 	}
@@ -82,13 +95,38 @@ function create() {
 	var people = game.add.group();
 	people.enableBody = true;
     people.physicsBodyType = Phaser.Physics.P2JS;
+	///For 1st Planet///
 		var person = people.create(550, 630, 'bob');
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.rotation = 130;
+ 		person.body.collides([playerCollisionGroup]);
+	///For 1st TOP Planet///
+		var person = people.create(280, 130, 'bob');
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = 130;
+		person.body.collides([playerCollisionGroup]);
+	///For 2nd Planet-I///
+		var person = people.create(1620, 130, 'bob');
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = -0.78;
+		person.body.collides([playerCollisionGroup]);
+	///For 2nd Planet-II///
+		var person = people.create(1750, 545, 'bob');
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = 3.14;
+		person.body.collides([playerCollisionGroup]);
+	
+	///For 2nd Planet-Bottom///
+		var person = people.create(1800, 855, 'bob');
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = 0.43;
 		person.body.collides([playerCollisionGroup]);
 	}
-
 	//////////////
 
 
