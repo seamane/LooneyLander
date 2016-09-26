@@ -11,6 +11,12 @@ function preload() {
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
 }
 
+var GameState = {
+    START:0,
+    PLAY:1,
+    END:2
+}
+
 var player = {
 	sprite:null,
 	numCollected:0,
@@ -24,7 +30,8 @@ var UIText = {
 	velocityY:null,
 	velocityX:null,
 	time:null,
-	numCollected:null
+	numCollected:null,
+	endOfGame:null
 }
 var bgm;
 
@@ -42,6 +49,8 @@ var cursors;//for arrow key input
 var planets = [];
 var acceptableLandingAngle = 30;//acceptable landing angle when landing on planet, in degrees
 var maxLandingVelocitySquared = 10000;//equivalent to 100 velocity
+
+var currGameState = GameState.START;
 
 function create() {
     game.world.setBounds(0, 0, 3843, 1080);
@@ -163,15 +172,22 @@ function create() {
 	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
+	UIText.endOfGame = game.add.text(900, 500, "END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.velocityX.fixedToCamera = true;
 	UIText.velocityY.fixedToCamera = true;
 	UIText.numCollected.fixedToCamera = true;
+	UIText.endOfGame.fixedToCamera = true;
+	UIText.endOfGame.visibility = false;
 	
     //load PressToStart UI
    // pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
    // pressTostartSprite.tint = 0xff00ff;
+   
+	var endPoint = game.add.sprite(126, 12, 'platform');
+    game.physics.p2.enable(endPoint);
+	endPoint.body.collides(playerCollisionGroup,hitEndPoint,this);
 
     startTime = this.game.time.totalElapsedSeconds();
 }
@@ -280,6 +296,11 @@ function hitPlanet(body1,body2) {
 	}
 }
 
+function hitEndPoint(body1,body2) {
+	currGameState = GameState.END;
+	UIText.endOfGame.visibility = true;
+}
+
 function hitPerson(body1,body2) {
 	//  body1 is the space player (as it's the body that owns the callback)
     //  body2 is the body it impacted with, in this case our person
@@ -302,6 +323,9 @@ function hitFuel(body1,body2) {
 }
 
 function update() {
+	if(currGameState == GameState.END) {
+		return;
+	}
 
     if (cursors.left.isDown)
     {
@@ -370,9 +394,12 @@ function update() {
 }
 
 function updateUI() {
-	  UIText.fuel.setText("Fuel: " + player.fuel);
-	  UIText.time.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
-	  UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
-	  UIText.velocityY.setText("Vertical Speed: " + (Math.trunc(-player.sprite.body.velocity.y)));
-	  UIText.numCollected.setText("Rescued: " + player.numCollected);
+	UIText.fuel.setText("Fuel: " + player.fuel);
+	UIText.time.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
+	UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
+	UIText.velocityY.setText("Vertical Speed: " + (Math.trunc(-player.sprite.body.velocity.y)));
+	UIText.numCollected.setText("Rescued: " + player.numCollected);
+	if(currGameState != GameState.END) {
+		UIText.endOfGame.visibility = false;
+	}
 }
