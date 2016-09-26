@@ -39,7 +39,7 @@ var cursors;//for arrow key input
 
 var planets = [];
 var acceptableLandingAngle = 30;//acceptable landing angle when landing on planet, in degrees
-var maxLandingVelocitySquared = 40000;//equivalent to 100 velocity
+var maxLandingVelocitySquared = 10000;//equivalent to 100 velocity
 
 function create() {
     game.world.setBounds(0, 0, 3843, 1080);
@@ -68,21 +68,21 @@ function create() {
 	///Fuel//
 	function createFuel()
 	{
-	var fuel = game.add.group();
-	fuel.enableBody = true;
-	fuel.physicsBodyType = Phaser.Physics.P2JS;
-	///For 1st Planet///
+		var fuel = game.add.group();
+		fuel.enableBody = true;
+		fuel.physicsBodyType = Phaser.Physics.P2JS;
+		///For 1st Planet///
 		var fuelCollection = fuel.create(810, 360, 'fuel');
 		fuelCollection.body.setRectangle(64,64);
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
-	///For 1st TOP Planet///
+		///For 1st TOP Planet///
 		var fuelCollection = fuel.create(870, 160, 'fuel');
 		fuelCollection.body.setRectangle(64,64);
 		fuelCollection.body.rotation = -0.53;
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
-	///For 2nd Bottom Planet///
+		///For 2nd Bottom Planet///
 		var fuelCollection = fuel.create(1500, 900, 'fuel');
 		fuelCollection.body.setRectangle(64,64);
 		fuelCollection.body.rotation = -0.53;
@@ -263,7 +263,9 @@ function hitPlanet(body1,body2) {
 	var landingAngle = Math.acos(upVectorRelativeToPlanet.dot(playerUpVector));
 	landingAngle = Math.abs(landingAngle * 180.0 / Math.PI);//radians to degrees
 	
-	if(landingAngle > acceptableLandingAngle) { 
+	var playerVelocitySquared = (player.sprite.body.velocity.x * player.sprite.body.velocity.x + player.sprite.body.velocity.y * player.sprite.body.velocity.y)
+	
+	if(landingAngle > acceptableLandingAngle && playerVelocitySquared > maxLandingVelocitySquared) { 
 		//|| (player.sprite.body.velocity.x * player.sprite.body.velocity.x + player.sprite.body.velocity.y * player.sprite.body.velocity.y) > maxLandingVelocitySquared) {
 		//player loses a person they have collected
 		if(player.numCollected > 0) {
@@ -278,9 +280,12 @@ function hitPerson(body1,body2) {
 	//  body1 is the space player (as it's the body that owns the callback)
     //  body2 is the body it impacted with, in this case our person
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-	body2.sprite.body = null;
-	body2.sprite.destroy();
-	player.numCollected += 1;
+	if(body2.sprite.alive) {
+		body2.sprite.alive = false;
+		body2.sprite.body = null;
+		body2.sprite.destroy();
+		player.numCollected += 1;
+	}
 }
 
 function hitFuel(body1,body2) {
