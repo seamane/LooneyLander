@@ -66,20 +66,34 @@ function create() {
 	game.physics.p2.updateBoundsCollisionGroup();
 	
 	///Fuel//
+	function createFuel()
+	{
 	var fuel = game.add.group();
 	fuel.enableBody = true;
 	fuel.physicsBodyType = Phaser.Physics.P2JS;
-	for (var i = 0; i < 10; i++)
-	{
-		var fuelCollection = fuel.create(game.world.randomX, game.world.randomY, 'fuel');
+		var fuelCollection = fuel.create(810, 360, 'fuel');
 		fuelCollection.body.setRectangle(64,64);
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
-
 	}
 	/////////
-
+	/////People////
+	function createPeople(){
 	var people = game.add.group();
+	people.enableBody = true;
+    people.physicsBodyType = Phaser.Physics.P2JS;
+		var person = people.create(550, 630, 'bob');
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = 130;
+		person.body.collides([playerCollisionGroup]);
+	}
+
+	//////////////
+
+
+
+/*	var people = game.add.group();
 	people.enableBody = true;
     people.physicsBodyType = Phaser.Physics.P2JS;
 	for (var i = 0; i < 4; i++)
@@ -89,7 +103,7 @@ function create() {
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.collides([playerCollisionGroup,planetCollisionGroup]);
 	}
-
+*/
 	//init player
     player.sprite = game.add.sprite(50, 800, 'player');
     game.physics.p2.enable(player.sprite);
@@ -100,6 +114,8 @@ function create() {
 	player.sprite.body.collides(fuelCollisionGroup,hitFuel,this);
 	
 	createPlatforms(planetCollisionGroup,playerCollisionGroup,peopleCollisionGroup);
+	createFuel(playerCollisionGroup);
+	createPeople(playerCollisionGroup, planetCollisionGroup);
 	
 	//create text for UI
 	UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Arial", fill: "#FFFFFF" });
