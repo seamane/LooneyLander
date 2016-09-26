@@ -7,7 +7,7 @@ function preload() {
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
     this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
-
+    this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
 }
 
 var player = {
@@ -91,7 +91,7 @@ function create() {
 	}
 
 	//init player
-    player.sprite = game.add.sprite(50, 800, 'player');
+    player.sprite = game.add.sprite(50, 950, 'player');
     game.physics.p2.enable(player.sprite);
     game.camera.follow(player.sprite);
 	player.sprite.body.setCollisionGroup(playerCollisionGroup);
@@ -127,10 +127,11 @@ function createPlatforms()
 	planetsGroup.physicsBodyType = Phaser.Physics.P2JS;
 	
 	var planet = new Object();
-	planet.radius = 100;
-	planet.gravitationalRadius = 400;
-	planet.gravity = 200;
-	planet.sprite = planetsGroup.create(600, 200, 'platform');
+	planet.radius = 420;
+	planet.gravitationalRadius = 600;
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(600, -200, 'planet1');
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
 	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
@@ -139,10 +140,12 @@ function createPlatforms()
 	planets[planets.length] = planet;
 	
 	planet = new Object();
-	planet.radius = 100;
+	planet.radius = 210;
 	planet.gravitationalRadius = 400;
-	planet.gravity = 200;
-	planet.sprite = planetsGroup.create(30, 1000, 'platform');
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(30, 1200, 'planet2');
+	planet.sprite.tint = 0xff00ff;
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
 	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
@@ -151,11 +154,11 @@ function createPlatforms()
 	planets[planets.length] = planet;
 	
 	planet = new Object();
-	planet.radius = 100;
+	planet.radius = 210;
 	planet.gravitationalRadius = 400;
-	planet.gravity = 200;
-	planet.sprite = planetsGroup.create(1300, 400, 'platform');
-	planet.sprite.body.rotation = -Math.PI / 4.0;
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(1800, 300, 'planet2');
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
 	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
@@ -168,6 +171,8 @@ function createPlatforms()
 	planet.gravitationalRadius = 400;
 	planet.gravity = 400;
 	planet.sprite = planetsGroup.create(800, 600, 'planet2');
+	planet.sprite.tint = 0xff0000;
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.rotation = -Math.PI / 2.0;
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
@@ -177,10 +182,12 @@ function createPlatforms()
 	planets[planets.length] = planet;
 	
 	planet = new Object();
-	planet.radius = 100;
-	planet.gravitationalRadius = 400;
-	planet.gravity = 200;
-	planet.sprite = planetsGroup.create(1500, 1000, 'platform');
+	planet.radius = 420;
+	planet.gravitationalRadius = 600;
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(1700, 1300, 'planet1');
+	planet.sprite.tint = 0x00ffff;
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
 	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
