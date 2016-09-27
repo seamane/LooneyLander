@@ -3,7 +3,9 @@ var game = new Phaser.Game(1800, 1080, Phaser.AUTO, 'phaser-example', { preload:
 function preload() {
     this.game.load.audio('bgm', 'assets/sounds/BGM.wav');
     this.game.load.image('background', 'assets/background.png', 3843, 1080);
-    this.game.load.image('bob', 'assets/BobSprite.png', 72, 72);
+    this.game.load.spritesheet('bob', 'assets/BobSprite.png', 72, 72);
+    this.game.load.spritesheet('ashley', 'assets/AshleySprite.png', 72, 72);
+    this.game.load.spritesheet('ryan', 'assets/RyanSprite.png', 72, 72);
     this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.spritesheet('spaceship', 'assets/SpaceshipSpritesheet.png', 256, 256);
@@ -129,24 +131,32 @@ function create() {
     people.physicsBodyType = Phaser.Physics.P2JS;
 	///For 1st Planet///
 		var person = people.create(550, 630, 'bob');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.rotation = 130;
  		person.body.collides([playerCollisionGroup]);
 	///For 1st TOP Planet///
-		var person = people.create(280, 130, 'bob');
+		var person = people.create(280, 130, 'ashley');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
-		person.body.rotation = 130;
+		person.body.rotation = -2.40;
 		person.body.collides([playerCollisionGroup]);
 	///For 2nd Planet-I///
 		var person = people.create(1620, 130, 'bob');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.rotation = -0.78;
 		person.body.collides([playerCollisionGroup]);
 	///For 2nd Planet-II///
-		var person = people.create(1750, 545, 'bob');
+		var person = people.create(1750, 545, 'ryan');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.rotation = 3.14;
@@ -154,6 +164,8 @@ function create() {
 	
 	///For 2nd Planet-Bottom///
 		var person = people.create(1800, 855, 'bob');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.rotation = 0.43;
