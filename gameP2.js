@@ -402,7 +402,7 @@ function update() {
 	
 	if(currGameState == GameState.END)
 	{
-		if(cursors.down.isDown)
+		if(cursors.down.isDown && currGameState != GameState.END)
 		{
 			currGameState = GameState.START;
 			pressToStart.visible = true;
@@ -412,7 +412,7 @@ function update() {
 	}
 	else if(currGameState == GameState.START)
 	{
-		if(cursors.down.isDown)
+		if(cursors.down.isDown && currGameState != GameState.END)
 		{
 			//timeCheck = game.time.now;
 			currGameState = GameState.PLAY;
@@ -429,11 +429,11 @@ function update() {
 		return;
 	}
 
-    if (cursors.left.isDown)
+    if (cursors.left.isDown && currGameState != GameState.END)
     {
         player.sprite.body.rotateLeft(70);
     }
-    else if (cursors.right.isDown)
+    else if (cursors.right.isDown && currGameState != GameState.END)
     {
         player.sprite.body.rotateRight(70);
     }
@@ -443,7 +443,7 @@ function update() {
     }
 
 	//will get rid of this
-    if (cursors.up.isDown)
+    if (cursors.up.isDown && currGameState != GameState.END)
     {
         player.sprite.body.thrust(100);
         player.sprite.frame = 1;
