@@ -6,6 +6,7 @@ function preload() {
     this.game.load.image('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
+    this.game.load.spritesheet('spaceship', 'assets/SpaceshipSpritesheet.png', 256, 256);
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
     this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
@@ -58,6 +59,11 @@ var maxLandingVelocitySquared = 40000;//equivalent to 200 velocity
 var currGameState = GameState.START;
 
 var stars = [];
+
+var spaceship = {
+	sprite:null,
+	frame:0
+}
 
 function create() {
     game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
@@ -212,12 +218,12 @@ function createEndpoint()
 	endPointGroup.enableBody = true;
 	endPointGroup.physicsBodyType = Phaser.Physics.P2JS;
 	
-	var endPoint = endPointGroup.create(3500, 500, 'platform');
-	endPoint.body.setCircle(300);
-	endPoint.body.setCollisionGroup(endPointCollisionGroup);
-	endPoint.body.collides(playerCollisionGroup);
-    endPoint.body.static = true;
-    endPoint.body.allowGravity = false;
+	spaceship.sprite = endPointGroup.create(3500, 500, 'spaceship');
+	spaceship.sprite.body.setCircle(123);
+	spaceship.sprite.body.setCollisionGroup(endPointCollisionGroup);
+	spaceship.sprite.body.collides(playerCollisionGroup);
+    spaceship.sprite.body.static = true;
+    spaceship.sprite.body.allowGravity = false;
 }
 
 function createUI() {
@@ -226,7 +232,7 @@ function createUI() {
 	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
-	UIText.endOfGame = game.add.text(900, 500, "You won!END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	UIText.endOfGame = game.add.text(900, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	pressToStart = game.add.sprite(650, 900,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
@@ -352,7 +358,7 @@ function hitEndPoint(body1,body2) {
 	else
 	{
 	 	currGameState = GameState.END;
-	 	UIText.endOfGame = game.add.text(400, 500, "You Loose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	 	UIText.endOfGame = game.add.text(400, 500, "You Lose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
 	 	UIText.endOfGame.fixedToCamera = true;
 	 	UIText.endOfGame.visible = true;
 	}
@@ -488,10 +494,13 @@ function update() {
 	
 			player.sprite.body.force.x += xForce;
 			player.sprite.body.force.y += yForce;
-		}
+		}	
 	}
 	
 	updateUI();
+	
+	spaceship.sprite.frame++;
+	spaceship.sprite.frame = spaceship.sprite.frame % 7;
 }
 
 function updateUI()
