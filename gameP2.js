@@ -6,15 +6,17 @@ function preload() {
     this.game.load.spritesheet('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.spritesheet('ashley', 'assets/AshleySprite.png', 72, 72);
     this.game.load.spritesheet('ryan', 'assets/RyanSprite.png', 72, 72);
-    this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.spritesheet('spaceship', 'assets/SpaceshipSpritesheet.png', 256, 256);
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
     this.game.load.image('fuel','assets/fuelCollectible.png',70,70);
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
+    this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
+    this.game.load.image('planet3', 'assets/Planet003.png', 648, 648);
     this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
     this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
     this.game.load.image('nebula2', 'assets/Nebula002.png', 1584, 1296);
+    this.game.load.image('startScreen', 'assets/startScreen.png', 1800, 1080);
 }
 
 var GameState = {
@@ -67,6 +69,8 @@ var spaceship = {
 	sprite:null,
 	frame:0
 }
+
+var startScreen;
 
 function create() {
     game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
@@ -173,19 +177,6 @@ function create() {
 	}
 	//////////////
 
-
-
-/*	var people = game.add.group();
-	people.enableBody = true;
-    people.physicsBodyType = Phaser.Physics.P2JS;
-	for (var i = 0; i < 4; i++)
-    {
-		var person = people.create(game.world.randomX, game.world.randomY, 'bob');
-		person.body.setRectangle(72,72);
-		person.body.setCollisionGroup(peopleCollisionGroup);
-		person.body.collides([playerCollisionGroup,planetCollisionGroup]);
-	}
-*/
 	createEndpoint();
 	//createStars();
 
@@ -249,6 +240,8 @@ function createUI() {
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(600, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	
+	startScreen  = game.add.sprite(0,0,'startScreen');
 	pressToStart = game.add.sprite(650, 900,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
@@ -329,6 +322,33 @@ function createPlanets()
 	planet.gravity = 400;
 	planet.sprite = planetsGroup.create(1700, 1300, 'planet1');
 	planet.sprite.tint = 0x00ffff;
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
+	
+	planet = new Object();
+	planet.radius = 330;
+	planet.gravitationalRadius = 600;
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(2700, 700, 'planet3');
+	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
+	planet.sprite.body.setCircle(planet.radius);
+	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+    planet.sprite.body.static = true;
+    planet.sprite.body.allowGravity = false;
+	planets[planets.length] = planet;
+	
+	planet = new Object();
+	planet.radius = 210;
+	planet.gravitationalRadius = 600;
+	planet.gravity = 400;
+	planet.sprite = planetsGroup.create(3100, 50, 'planet2');
+	planet.sprite.tint = 0x0ef0ff;
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
@@ -446,6 +466,8 @@ function update() {
 				game.time.now - timeCheck > 5000
 				UIText.gameObjective.visible = false;
 			}*/
+			startScreen.destroy();
+			startScreen = null;
 		}
 		return;
 	}
