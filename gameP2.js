@@ -12,6 +12,7 @@ function preload() {
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
     this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
     this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
+    this.game.load.image('nebula2', 'assets/Nebula002.png', 1584, 1296);
 }
 
 var GameState = {
@@ -93,6 +94,7 @@ function create() {
 	game.physics.p2.updateBoundsCollisionGroup();
 	
 	game.add.sprite(0,0,'nebula');
+	game.add.sprite(1296,0,'nebula2');
 
 	///Fuel//
 	function createFuel()
@@ -232,7 +234,7 @@ function createUI() {
 	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
-	UIText.endOfGame = game.add.text(900, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	UIText.endOfGame = game.add.text(600, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	pressToStart = game.add.sprite(650, 900,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
@@ -358,7 +360,7 @@ function hitEndPoint(body1,body2) {
 	else
 	{
 	 	currGameState = GameState.END;
-	 	UIText.endOfGame = game.add.text(400, 500, "You Lose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	 	UIText.endOfGame = game.add.text(600, 500, "You Lose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
 	 	UIText.endOfGame.fixedToCamera = true;
 	 	UIText.endOfGame.visible = true;
 	}
