@@ -10,6 +10,7 @@ function preload() {
     this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
     this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
+    this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
 }
 
 var GameState = {
@@ -51,13 +52,15 @@ var starfield;//background
 var cursors;//for arrow key input
 
 var planets = [];
-var acceptableLandingAngle = 30;//acceptable landing angle when landing on planet, in degrees
+var acceptableLandingAngle = 40;//acceptable landing angle when landing on planet, in degrees
 var maxLandingVelocitySquared = 40000;//equivalent to 200 velocity
 
 var currGameState = GameState.START;
 
+var stars = [];
+
 function create() {
-    game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateUIText, this);
+    game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
     game.time.events.loop(Phaser.Timer.SECOND * 1.5, updateOBJText, this);
     game.world.setBounds(0, 0, 3843, 1080);
     bgm = game.add.audio('bgm');
@@ -82,6 +85,8 @@ function create() {
 
 	game.sound.setDecodedCallback(bgm, start, this);
 	game.physics.p2.updateBoundsCollisionGroup();
+	
+	game.add.sprite(0,0,'nebula');
 
 	///Fuel//
 	function createFuel()
@@ -161,6 +166,7 @@ function create() {
 	}
 */
 	createEndpoint();
+	//createStars();
 
 	//init player
     player.sprite = game.add.sprite(50, 950, 'player');
@@ -185,6 +191,21 @@ function start() {
     bgm.loopFull(0.6);
 }
 
+function createStars() 
+{
+	for (var i = 0; i < 500; i++)
+	{
+		stars[i] = {
+			x: Math.random() * game.world.width,
+			y: Math.random() * game.world.height,
+			radius: Math.sqrt(Math.random() * 2),
+			alpha: 1.0,
+			decreasing: true,
+			dRatio: Math.random()*0.05
+		}
+	}
+}
+
 function createEndpoint()
 {
 	var endPointGroup = game.add.group();
@@ -200,14 +221,14 @@ function createEndpoint()
 }
 
 function createUI() {
-	UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Arial", fill: "#FFFFFF" });
-	UIText.time = game.add.text(10, 30, "Elapsed time: 0",  { font: "20px Arial", fill: "#FFFFFF" });
-	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
-	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
-	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
-	UIText.endOfGame = game.add.text(900, 500, "You won!END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
-	UIText.gameObjective = game.add.text(900, 500, "Rescue atleast 1 person to clear the game!",  { font: "50px Arial", fill: "#FFFFFF" });
-	pressToStart = game.add.sprite(691, 100,'pressToStart');
+	UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.time = game.add.text(10, 30, "Elapsed time: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.endOfGame = game.add.text(900, 500, "You won!END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	pressToStart = game.add.sprite(650, 900,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.gameObjective.fixedToCamera = true;
@@ -329,13 +350,17 @@ function hitEndPoint(body1,body2) {
 		UIText.endOfGame.visible = true;
 	}
 	else
-	 {
+	{
 	 	currGameState = GameState.END;
 	 	UIText.endOfGame = game.add.text(400, 500, "You Loose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
 	 	UIText.endOfGame.fixedToCamera = true;
 	 	UIText.endOfGame.visible = true;
-	 }
+	}
 
+	/*player.sprite.body.velocity.x = 0;
+	player.sprite.body.velocity.y = 0;
+	player.sprite.body.force.x = 0;
+	player.sprite.body.force.y = 0;*/
 }
 
 function hitPerson(body1,body2) {
@@ -374,6 +399,8 @@ function updateOBJText(){
 }
 
 function update() {
+	//drawStars();
+	
 	if(currGameState == GameState.END)
 	{
 		if(cursors.down.isDown)
@@ -467,7 +494,8 @@ function update() {
 	updateUI();
 }
 
-function updateUI() {
+function updateUI()
+{
 	UIText.fuel.setText("Fuel: " + player.fuel);
 	UIText.time.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
 	UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
@@ -478,5 +506,36 @@ function updateUI() {
 	}*/
 }
 
-
+function drawStars()
+{
+	game.context.save();
+	game.context.fillStyle = "#111"
+	game.context.fillRect(0, 0, game.world.width, game.world.height);
+	for (var i = 0; i < stars.length; i++)
+	{
+		var star = stars[i];
+		game.context.beginPath();
+		game.context.arc(star.x, star.y, star.radius, 0, 2*Math.PI);
+		game.context.closePath();
+		game.context.fillStyle = "rgba(255, 255, 255, " + star.alpha + ")";
+		if (star.decreasing == true)
+		{
+			star.alpha -= star.dRatio;
+			if (star.alpha < 0.1)
+			{ 
+				star.decreasing = false; 
+			}
+		}
+		else
+		{
+			star.alpha += star.dRatio;
+			if (star.alpha > 0.95)
+			{ 
+				star.decreasing = true;
+			}
+		}
+		game.context.fill();
+	}
+	game.context.restore();
+}
 
