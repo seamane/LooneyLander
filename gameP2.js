@@ -61,7 +61,7 @@ var stars = [];
 
 function create() {
     game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
-    game.time.events.loop(Phaser.Timer.SECOND * 1.5, updateOBJText, this);
+    game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateOBJText, this);
     game.world.setBounds(0, 0, 3843, 1080);
     bgm = game.add.audio('bgm');
     game.physics.startSystem(Phaser.Physics.P2JS);
@@ -394,7 +394,6 @@ function updateOBJText(){
 	else
 	{
 		UIText.gameObjective.visible = false;
-		game.time.events.stop(updateOBJText);
 	}
 }
 
@@ -418,6 +417,8 @@ function update() {
 			//timeCheck = game.time.now;
 			currGameState = GameState.PLAY;
 			pressToStart.visible = false;
+			game.time.events.stop(updateOBJText);
+			UIText.gameObjective.visible = false;
 			/*if(!UIText.gameObjective.visible)
 			{
 				UIText.gameObjective.visible = true;
