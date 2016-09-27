@@ -32,9 +32,9 @@ var UIText = {
 	velocityX:null,
 	time:null,
 	numCollected:null,
-	endOfGame:null,
-	pressToStart:null
+	endOfGame:null
 }
+var pressToStart;
 var bgm; //background music
 
 var playerCollisionGroup;
@@ -56,6 +56,7 @@ var maxLandingVelocitySquared = 10000;//equivalent to 100 velocity
 var currGameState = GameState.START;
 
 function create() {
+    game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateUIText, this);
     game.world.setBounds(0, 0, 3843, 1080);
     bgm = game.add.audio('bgm');
     game.physics.startSystem(Phaser.Physics.P2JS);
@@ -203,7 +204,7 @@ function createUI() {
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(900, 500, "END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
-	UIText.pressToStart = game.add.sprite(691, 100,'pressToStart');
+	pressToStart = game.add.sprite(691, 100,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.velocityX.fixedToCamera = true;
@@ -211,7 +212,7 @@ function createUI() {
 	UIText.numCollected.fixedToCamera = true;
 	UIText.endOfGame.fixedToCamera = true;
 	UIText.endOfGame.visible = false;
-	UIText.pressToStart.visible = true;
+	pressToStart.visible = true;
 }
 
 function createPlanets()
@@ -348,18 +349,17 @@ function update() {
 		if(cursors.down.isDown)
 		{
 			currGameState = GameState.START;
-			UIText.pressToStart.visible = true;
+			pressToStart.visible = true;
 			UIText.endOfGame.visible = false;
 		}
 		return;
 	}
 	else if(currGameState == GameState.START)
 	{
-		UIText.pressToStart.tint = Math.random() * 0xffffff;
 		if(cursors.down.isDown)
 		{
 			currGameState = GameState.PLAY;
-			UIText.pressToStart.visible = false;
+			pressToStart.visible = false;
 		}
 		return;
 	}
@@ -439,4 +439,10 @@ function updateUI() {
 	/*if(currGameState != GameState.END) {
 		UIText.endOfGame.visible = false;
 	}*/
+}
+
+
+
+function updateUIText() {
+    pressToStart.tint = Math.random() * 0xffffff;
 }
