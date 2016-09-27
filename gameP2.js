@@ -93,6 +93,7 @@ function create() {
 	game.sound.setDecodedCallback(bgm, start, this);
 	game.physics.p2.updateBoundsCollisionGroup();
 	
+	//background sprites
 	game.add.sprite(0,0,'nebula');
 	game.add.sprite(1296,0,'nebula2');
 
@@ -435,6 +436,14 @@ function update() {
 			}*/
 		}
 		return;
+	}
+	
+	if (player.fuel <= 0)
+	{
+		currGameState = GameState.END;
+	 	UIText.endOfGame = game.add.text(600, 500, "You Lose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	 	UIText.endOfGame.fixedToCamera = true;
+	 	UIText.endOfGame.visible = true;
 	}
 
     if (cursors.left.isDown && currGameState != GameState.END)
