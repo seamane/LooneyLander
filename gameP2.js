@@ -32,7 +32,8 @@ var UIText = {
 	velocityX:null,
 	time:null,
 	numCollected:null,
-	endOfGame:null
+	endOfGame:null,
+	gameObjective:null
 }
 var pressToStart;
 var bgm; //background music
@@ -51,7 +52,7 @@ var cursors;//for arrow key input
 
 var planets = [];
 var acceptableLandingAngle = 30;//acceptable landing angle when landing on planet, in degrees
-var maxLandingVelocitySquared = 10000;//equivalent to 100 velocity
+var maxLandingVelocitySquared = 40000;//equivalent to 200 velocity
 
 var currGameState = GameState.START;
 
@@ -203,7 +204,7 @@ function createUI() {
 	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
-	UIText.endOfGame = game.add.text(900, 500, "END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	UIText.endOfGame = game.add.text(900, 500, "You won!END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
 	pressToStart = game.add.sprite(691, 100,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
@@ -318,8 +319,19 @@ function hitPlanet(body1,body2) {
 }
 
 function hitEndPoint(body1,body2) {
-	currGameState = GameState.END;
-	UIText.endOfGame.visible = true;
+	if(player.numCollected >=3)
+	{
+		currGameState = GameState.END;
+		UIText.endOfGame.visible = true;
+	}
+	else
+	 {
+	 	currGameState = GameState.END;
+	 	UIText.endOfGame = game.add.text(400, 500, "You Loose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	 	UIText.endOfGame.fixedToCamera = true;
+	 	UIText.endOfGame.visible = true;
+	 }
+
 }
 
 function hitPerson(body1,body2) {
