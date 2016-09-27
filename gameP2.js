@@ -8,7 +8,7 @@ function preload() {
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.spritesheet('spaceship', 'assets/SpaceshipSpritesheet.png', 256, 256);
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
-    this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
+    this.game.load.image('fuel','assets/fuelCollectible.png',70,70);
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
     this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
     this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
@@ -101,19 +101,19 @@ function create() {
 		fuel.enableBody = true;
 		fuel.physicsBodyType = Phaser.Physics.P2JS;
 		///For 1st Planet///
-		var fuelCollection = fuel.create(810, 360, 'fuel');
-		fuelCollection.body.setRectangle(64,64);
+		var fuelCollection = fuel.create(810, 370, 'fuel');
+		fuelCollection.body.setRectangle(70,70);
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
 		///For 1st TOP Planet///
-		var fuelCollection = fuel.create(870, 160, 'fuel');
-		fuelCollection.body.setRectangle(64,64);
+		var fuelCollection = fuel.create(870, 140, 'fuel');
+		fuelCollection.body.setRectangle(70,70);
 		fuelCollection.body.rotation = -0.53;
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
 		///For 2nd Bottom Planet///
-		var fuelCollection = fuel.create(1500, 900, 'fuel');
-		fuelCollection.body.setRectangle(64,64);
+		var fuelCollection = fuel.create(1500, 910, 'fuel');
+		fuelCollection.body.setRectangle(70,70);
 		fuelCollection.body.rotation = -0.53;
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
