@@ -37,7 +37,7 @@ var UIText = {
 }
 var pressToStart;
 var bgm; //background music
-
+var timeCheck;
 var playerCollisionGroup;
 var peopleCollisionGroup;
 var planetCollisionGroup;
@@ -58,6 +58,7 @@ var currGameState = GameState.START;
 
 function create() {
     game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateUIText, this);
+    game.time.events.loop(Phaser.Timer.SECOND * 1.5, updateOBJText, this);
     game.world.setBounds(0, 0, 3843, 1080);
     bgm = game.add.audio('bgm');
     game.physics.startSystem(Phaser.Physics.P2JS);
@@ -205,14 +206,17 @@ function createUI() {
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(900, 500, "You won!END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	UIText.gameObjective = game.add.text(900, 500, "Rescue atleast 1 person to clear the game!",  { font: "50px Arial", fill: "#FFFFFF" });
 	pressToStart = game.add.sprite(691, 100,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
+	UIText.gameObjective.fixedToCamera = true;
 	UIText.velocityX.fixedToCamera = true;
 	UIText.velocityY.fixedToCamera = true;
 	UIText.numCollected.fixedToCamera = true;
 	UIText.endOfGame.fixedToCamera = true;
 	UIText.endOfGame.visible = false;
+	UIText.gameObjective.visible = false;
 	pressToStart.visible = true;
 }
 
@@ -319,7 +323,7 @@ function hitPlanet(body1,body2) {
 }
 
 function hitEndPoint(body1,body2) {
-	if(player.numCollected >=3)
+	if(player.numCollected >=1)
 	{
 		currGameState = GameState.END;
 		UIText.endOfGame.visible = true;
@@ -357,6 +361,18 @@ function hitFuel(body1,body2) {
 function updateUIText() {
     pressToStart.tint = Math.random() * 0xffffff;
 }
+function updateOBJText(){
+	if(UIText.gameObjective.visible == false)
+	{
+		UIText.gameObjective.visible = true;
+	}
+	else
+	{
+		UIText.gameObjective.visible = false;
+		game.time.events.stop(updateOBJText);
+	}
+}
+
 function update() {
 	if(currGameState == GameState.END)
 	{
@@ -372,8 +388,15 @@ function update() {
 	{
 		if(cursors.down.isDown)
 		{
+			//timeCheck = game.time.now;
 			currGameState = GameState.PLAY;
 			pressToStart.visible = false;
+			/*if(!UIText.gameObjective.visible)
+			{
+				UIText.gameObjective.visible = true;
+				game.time.now - timeCheck > 5000
+				UIText.gameObjective.visible = false;
+			}*/
 		}
 		return;
 	}
