@@ -189,8 +189,8 @@ function createEndpoint()
 	endPointGroup.enableBody = true;
 	endPointGroup.physicsBodyType = Phaser.Physics.P2JS;
 	
-	var endPoint = endPointGroup.create(126, 12, 'platform');
-	endPoint.body.setCircle(100);
+	var endPoint = endPointGroup.create(3500, 500, 'platform');
+	endPoint.body.setCircle(300);
 	endPoint.body.setCollisionGroup(endPointCollisionGroup);
 	endPoint.body.collides(playerCollisionGroup);
     endPoint.body.static = true;
@@ -342,7 +342,9 @@ function hitFuel(body1,body2) {
 	body2.sprite.destroy();
 	player.fuel += 100;
 }
-
+function updateUIText() {
+    pressToStart.tint = Math.random() * 0xffffff;
+}
 function update() {
 	if(currGameState == GameState.END)
 	{
@@ -443,6 +445,3 @@ function updateUI() {
 
 
 
-function updateUIText() {
-    pressToStart.tint = Math.random() * 0xffffff;
-}
