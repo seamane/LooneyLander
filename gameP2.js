@@ -9,6 +9,7 @@ function preload() {
     this.game.load.image('platform', 'assets/platform.png', 126, 12);
     this.game.load.image('fuel','assets/fuelCollectible.png',64,64);
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
+    this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
 }
 
 var GameState = {
@@ -31,14 +32,16 @@ var UIText = {
 	velocityX:null,
 	time:null,
 	numCollected:null,
-	endOfGame:null
+	endOfGame:null,
+	pressToStart:null
 }
-var bgm;
+var bgm; //background music
 
 var playerCollisionGroup;
 var peopleCollisionGroup;
 var planetCollisionGroup;
 var fuelCollisionGroup;
+var endPointCollisionGroup;
 
 var spaceBarPressed = -3.0;
 var startTime;
@@ -72,6 +75,7 @@ function create() {
 	peopleCollisionGroup = game.physics.p2.createCollisionGroup();
 	planetCollisionGroup = game.physics.p2.createCollisionGroup();
 	fuelCollisionGroup = game.physics.p2.createCollisionGroup();
+	endPointCollisionGroup = game.physics.p2.createCollisionGroup();
 
 	game.sound.setDecodedCallback(bgm, start, this);
 	game.physics.p2.updateBoundsCollisionGroup();
@@ -153,6 +157,8 @@ function create() {
 		person.body.collides([playerCollisionGroup,planetCollisionGroup]);
 	}
 */
+	createEndpoint();
+
 	//init player
     player.sprite = game.add.sprite(50, 950, 'player');
     game.physics.p2.enable(player.sprite);
@@ -161,18 +167,43 @@ function create() {
 	player.sprite.body.collides(planetCollisionGroup,hitPlanet,this);
 	player.sprite.body.collides(peopleCollisionGroup,hitPerson,this);
 	player.sprite.body.collides(fuelCollisionGroup,hitFuel,this);
+	player.sprite.body.collides(endPointCollisionGroup,hitEndPoint,this);
 	
 	createPlanets();
 	createFuel(playerCollisionGroup);
 	createPeople(playerCollisionGroup, planetCollisionGroup);
 	
-	//create text for UI
+	createUI();
+
+    startTime = this.game.time.totalElapsedSeconds();
+}
+
+function start() {
+    bgm.loopFull(0.6);
+}
+
+function createEndpoint()
+{
+	var endPointGroup = game.add.group();
+	endPointGroup.enableBody = true;
+	endPointGroup.physicsBodyType = Phaser.Physics.P2JS;
+	
+	var endPoint = endPointGroup.create(126, 12, 'platform');
+	endPoint.body.setCircle(100);
+	endPoint.body.setCollisionGroup(endPointCollisionGroup);
+	endPoint.body.collides(playerCollisionGroup);
+    endPoint.body.static = true;
+    endPoint.body.allowGravity = false;
+}
+
+function createUI() {
 	UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.time = game.add.text(10, 30, "Elapsed time: 0",  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Arial", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(900, 500, "END OF GAME SUCKER!!!!",  { font: "50px Arial", fill: "#FFFFFF" });
+	UIText.pressToStart = game.add.sprite(691, 100,'pressToStart');
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.velocityX.fixedToCamera = true;
@@ -180,20 +211,9 @@ function create() {
 	UIText.numCollected.fixedToCamera = true;
 	UIText.endOfGame.fixedToCamera = true;
 	UIText.endOfGame.visible = false;
-	
-    //load PressToStart UI
-   // pressTostartSprite = game.add.sprite(525, 850, 'pressToStart');
-   // pressTostartSprite.tint = 0xff00ff;
-   
-	var endPoint = game.add.sprite(126, 12, 'platform');
-    game.physics.p2.enable(endPoint);
-	endPoint.body.collides(playerCollisionGroup,hitEndPoint,this);
+	UIText.pressToStart.visible = true;
+}
 
-    startTime = this.game.time.totalElapsedSeconds();
-}
-function start() {
-    bgm.loopFull(0.6);
-}
 function createPlanets()
 {
 	var planetsGroup = game.add.group();
@@ -323,7 +343,24 @@ function hitFuel(body1,body2) {
 }
 
 function update() {
-	if(currGameState == GameState.END) {
+	if(currGameState == GameState.END)
+	{
+		if(cursors.down.isDown)
+		{
+			currGameState = GameState.START;
+			UIText.pressToStart.visible = true;
+			UIText.endOfGame.visible = false;
+		}
+		return;
+	}
+	else if(currGameState == GameState.START)
+	{
+		UIText.pressToStart.tint = Math.random() * 0xffffff;
+		if(cursors.down.isDown)
+		{
+			currGameState = GameState.PLAY;
+			UIText.pressToStart.visible = false;
+		}
 		return;
 	}
 
@@ -399,7 +436,7 @@ function updateUI() {
 	UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
 	UIText.velocityY.setText("Vertical Speed: " + (Math.trunc(-player.sprite.body.velocity.y)));
 	UIText.numCollected.setText("Rescued: " + player.numCollected);
-	if(currGameState != GameState.END) {
+	/*if(currGameState != GameState.END) {
 		UIText.endOfGame.visible = false;
-	}
+	}*/
 }
