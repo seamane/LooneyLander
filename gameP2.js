@@ -398,28 +398,31 @@ function hitPlanet(body1,body2) {
 }
 
 function hitEndPoint(body1,body2) {
-	pressToStart = game.add.sprite(550, 900,'pressToStart');
-	pressToStart.fixedToCamera = true;
-	
-	game.world.bringToTop(gameoverScreen);
-	game.world.bringToTop(gameoverText);
-	game.world.bringToTop(pressToStart);
-	
-	var playerScore = (1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime)) + (500 * player.numCollected) + player.fuel);
-	
-	UIText.score = game.add.text(800, 700, playerScore,  { font: "100px Tandysoft", fill: "#FFFFFF" });
-	UIText.score.fixedToCamera = true;
-	
-	gameoverScreen.visible = true;
-	gameoverText.visible = true;
-	pressToStart.visible = true;
-	
-    pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
-    gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
-	
-	player.fuel = player.startingFuel;
-	
-	currGameState = GameState.END;
+	if(currGameState != GameState.END)
+	{
+		pressToStart = game.add.sprite(550, 900,'pressToStart');
+		pressToStart.fixedToCamera = true;
+		
+		game.world.bringToTop(gameoverScreen);
+		game.world.bringToTop(gameoverText);
+		game.world.bringToTop(pressToStart);
+		
+		var playerScore = (1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime)) + (500 * player.numCollected) + player.fuel);
+		
+		UIText.score = game.add.text(800, 700, playerScore,  { font: "100px Tandysoft", fill: "#FFFFFF" });
+		UIText.score.fixedToCamera = true;
+		
+		gameoverScreen.visible = true;
+		gameoverText.visible = true;
+		pressToStart.visible = true;
+		
+		pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
+		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
+		
+		player.fuel = player.startingFuel;
+		
+		currGameState = GameState.END;
+	}
 }
 
 function hitPerson(body1,body2) {
