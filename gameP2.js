@@ -595,8 +595,8 @@ function throwPeople()
 	throwablePeople.enableBody = true;
     throwablePeople.physicsBodyType = Phaser.Physics.P2JS;
 	var throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
-//	throwPerson.sprite.body.force.x = Math.cos(throwPerson.spaceBarAngle) * 4000;    // accelerateToObject 
-//	throwPerson.sprite.body.force.y = Math.sin(throwPerson.spaceBarAngle) * 4000;
+	throwPerson.body.rotateLeft(300);
+	throwPerson.body.velocity.x = -100;
 
 }
 function drawStars()
