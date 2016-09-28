@@ -328,8 +328,8 @@ function createPlanets()
 	planets[planets.length] = planet;
 	
     //  Create the atmosphere
-    innerCircle = new Phaser.Circle(30, 1200, 700);
-    outerCircle = new Phaser.Circle(30, 1200, 800);
+    innerCircle = new Phaser.Circle(30, 1200, 600);
+    outerCircle = new Phaser.Circle(30, 1200, 700);
 
 	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
     grd.addColorStop(1, 'rgba(255,255,224,0.5)');
@@ -339,7 +339,7 @@ function createPlanets()
 	
 	planet = new Object();
 	planet.radius = 210;
-	planet.gravitationalRadius = 400;
+	planet.gravitationalRadius = 350;
 	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(30, 1200, 'planet2');
 	planet.sprite.tint = 0xff00ff;
@@ -352,8 +352,8 @@ function createPlanets()
 	planets[planets.length] = planet;
 	
     //  Create the atmosphere
-    innerCircle = new Phaser.Circle(1800, 300, 700);
-    outerCircle = new Phaser.Circle(1800, 300, 800);
+    innerCircle = new Phaser.Circle(1800, 300, 600);
+    outerCircle = new Phaser.Circle(1800, 300, 700);
 
 	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
     grd.addColorStop(1, 'rgba(255,255,224,0.5)');
@@ -363,7 +363,7 @@ function createPlanets()
 	
 	planet = new Object();
 	planet.radius = 210;
-	planet.gravitationalRadius = 400;
+	planet.gravitationalRadius = 350;
 	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(1800, 300, 'planet2');
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
@@ -375,8 +375,8 @@ function createPlanets()
 	planets[planets.length] = planet;
 	
     //  Create the atmosphere
-    innerCircle = new Phaser.Circle(800, 600, 700);
-    outerCircle = new Phaser.Circle(800, 600, 800);
+    innerCircle = new Phaser.Circle(800, 600, 600);
+    outerCircle = new Phaser.Circle(800, 600, 700);
 
 	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
     grd.addColorStop(1, 'rgba(255,255,224,0.5)');
@@ -386,7 +386,7 @@ function createPlanets()
 	
 	planet = new Object();
 	planet.radius = 210;
-	planet.gravitationalRadius = 400;
+	planet.gravitationalRadius = 350;
 	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(800, 600, 'planet2');
 	planet.sprite.tint = 0xff0000;
@@ -424,8 +424,8 @@ function createPlanets()
 	planets[planets.length] = planet;
 	
     //  Create the atmosphere
-    innerCircle = new Phaser.Circle(2700, 700, 1000);
-    outerCircle = new Phaser.Circle(2700, 700, 1100);
+    innerCircle = new Phaser.Circle(2700, 700, 900);
+    outerCircle = new Phaser.Circle(2700, 700, 1000);
 
 	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
     grd.addColorStop(1, 'rgba(255,255,224,0.5)');
@@ -435,7 +435,7 @@ function createPlanets()
 	
 	planet = new Object();
 	planet.radius = 330;
-	planet.gravitationalRadius = 550;
+	planet.gravitationalRadius = 500;
 	planet.gravity = 300;
 	planet.sprite = planetsGroup.create(2700, 700, 'planet3');
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
@@ -447,8 +447,8 @@ function createPlanets()
 	planets[planets.length] = planet;
 	
     //  Create the atmosphere
-    innerCircle = new Phaser.Circle(3100, 50, 700);
-    outerCircle = new Phaser.Circle(3100, 50, 800);
+    innerCircle = new Phaser.Circle(3100, 50, 600);
+    outerCircle = new Phaser.Circle(3100, 50, 700);
 
 	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
     grd.addColorStop(1, 'rgba(255,255,224,0.5)');
@@ -458,7 +458,7 @@ function createPlanets()
 	
 	planet = new Object();
 	planet.radius = 210;
-	planet.gravitationalRadius = 400;
+	planet.gravitationalRadius = 350;
 	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(3100, 50, 'planet2');
 	planet.sprite.tint = 0x0ef0ff;
