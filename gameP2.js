@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1800, 1080, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1800, 1050, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
 
 function preload() {
     this.game.load.audio('bgm', 'assets/sounds/BGM.wav');
@@ -191,8 +191,8 @@ function create() {
 	player.sprite.body.collides(endPointCollisionGroup,hitEndPoint,this);
 	
 	createPlanets();
-	createFuel(playerCollisionGroup);
-	createPeople(playerCollisionGroup, planetCollisionGroup);
+	createFuel();
+	createPeople();
 	
 	createUI();
 
@@ -277,7 +277,7 @@ function createPlanets()
 	planet = new Object();
 	planet.radius = 210;
 	planet.gravitationalRadius = 400;
-	planet.gravity = 400;
+	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(30, 1200, 'planet2');
 	planet.sprite.tint = 0xff00ff;
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
@@ -291,7 +291,7 @@ function createPlanets()
 	planet = new Object();
 	planet.radius = 210;
 	planet.gravitationalRadius = 400;
-	planet.gravity = 400;
+	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(1800, 300, 'planet2');
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
@@ -304,7 +304,7 @@ function createPlanets()
 	planet = new Object();
 	planet.radius = 210;
 	planet.gravitationalRadius = 400;
-	planet.gravity = 400;
+	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(800, 600, 'planet2');
 	planet.sprite.tint = 0xff0000;
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
@@ -332,8 +332,8 @@ function createPlanets()
 	
 	planet = new Object();
 	planet.radius = 330;
-	planet.gravitationalRadius = 600;
-	planet.gravity = 400;
+	planet.gravitationalRadius = 550;
+	planet.gravity = 300;
 	planet.sprite = planetsGroup.create(2700, 700, 'planet3');
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
@@ -346,7 +346,7 @@ function createPlanets()
 	planet = new Object();
 	planet.radius = 210;
 	planet.gravitationalRadius = 600;
-	planet.gravity = 400;
+	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(3100, 50, 'planet2');
 	planet.sprite.tint = 0x0ef0ff;
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
