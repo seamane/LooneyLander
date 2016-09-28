@@ -2,13 +2,13 @@ var game = new Phaser.Game(1800, 1050, Phaser.AUTO, 'phaser-example', { preload:
 
 function preload() {
     this.game.load.audio('bgm', 'assets/sounds/BGM.wav');
-    this.game.load.image('background', 'assets/background.png', 3843, 1080);
+    //this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.spritesheet('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.spritesheet('ashley', 'assets/AshleySprite.png', 72, 72);
     this.game.load.spritesheet('ryan', 'assets/RyanSprite.png', 72, 72);
     this.game.load.spritesheet('player', 'assets/CharacterSpriteSheet.png', 60, 72);
     this.game.load.spritesheet('spaceship', 'assets/SpaceshipSpritesheet.png', 256, 256);
-    this.game.load.image('platform', 'assets/platform.png', 126, 12);
+    //this.game.load.image('platform', 'assets/platform.png', 126, 12);
     this.game.load.image('fuel','assets/fuelCollectible.png',70,70);
     this.game.load.image('planet1', 'assets/Planet001.png', 864, 864);
     this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
@@ -17,6 +17,8 @@ function preload() {
     this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
     this.game.load.image('nebula2', 'assets/Nebula002.png', 1584, 1296);
     this.game.load.image('startScreen', 'assets/startScreen.png', 1800, 1080);
+    this.game.load.image('gameoverScreen', 'assets/gameoverScreen.png', 1800, 1080);
+    this.game.load.image('gameover', 'assets/game_over.png', 800, 146);
 }
 
 var GameState = {
@@ -40,7 +42,8 @@ var UIText = {
 	time:null,
 	numCollected:null,
 	endOfGame:null,
-	gameObjective:null
+	gameObjective:null,
+	score:null
 }
 var pressToStart;
 var bgm; //background music
@@ -71,10 +74,17 @@ var spaceship = {
 }
 
 var startScreen;
+var gameoverScreen;
+var gameoverText;
+
+var objTextLoop;
+var pressToStartLoop;
+var gameoverTextLoop;
 
 function create() {
-    game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
-    game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateOBJText, this);
+    pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
+    objTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateOBJText, this);
+	
     game.world.setBounds(0, 0, 3843, 1080);
     bgm = game.add.audio('bgm');
     game.physics.startSystem(Phaser.Physics.P2JS);
@@ -84,11 +94,7 @@ function create() {
     //  Turn on impact events for the world, without this we get no collision callbacks
     game.physics.p2.setImpactEvents(true)
 
-    //starfield = game.add.tileSprite(0, 0, 1800, 1080, 'background');
-    //starfield.fixedToCamera = true;
-
     cursors = game.input.keyboard.createCursorKeys();
-	
 
 	playerCollisionGroup = game.physics.p2.createCollisionGroup();
 	peopleCollisionGroup = game.physics.p2.createCollisionGroup();
@@ -200,7 +206,7 @@ function create() {
 }
 
 function start() {
-    bgm.loopFull(0.6);
+    //bgm.loopFull(0.6);
 }
 
 function createStars() 
@@ -239,10 +245,13 @@ function createUI() {
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(600, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
-	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	
 	startScreen  = game.add.sprite(0,0,'startScreen');
-	pressToStart = game.add.sprite(650, 900,'pressToStart');
+	pressToStart = game.add.sprite(550, 900,'pressToStart');
+	gameoverScreen = game.add.sprite(0,0,'gameoverScreen');
+	gameoverText = game.add.sprite(450,100,'gameover');
+	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	
 	UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.gameObjective.fixedToCamera = true;
@@ -253,6 +262,10 @@ function createUI() {
 	UIText.endOfGame.visible = false;
 	UIText.gameObjective.visible = false;
 	pressToStart.visible = true;
+	gameoverScreen.visible = false;
+	gameoverScreen.fixedToCamera = true;
+	gameoverText.visible = false;
+	gameoverText.fixedToCamera = true;
 }
 
 function createPlanets()
@@ -385,23 +398,28 @@ function hitPlanet(body1,body2) {
 }
 
 function hitEndPoint(body1,body2) {
-	if(player.numCollected >=1)
-	{
-		currGameState = GameState.END;
-		UIText.endOfGame.visible = true;
-	}
-	else
-	{
-	 	currGameState = GameState.END;
-	 	UIText.endOfGame = game.add.text(600, 500, "You Lose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
-	 	UIText.endOfGame.fixedToCamera = true;
-	 	UIText.endOfGame.visible = true;
-	}
-
-	/*player.sprite.body.velocity.x = 0;
-	player.sprite.body.velocity.y = 0;
-	player.sprite.body.force.x = 0;
-	player.sprite.body.force.y = 0;*/
+	pressToStart = game.add.sprite(550, 900,'pressToStart');
+	pressToStart.fixedToCamera = true;
+	
+	game.world.bringToTop(gameoverScreen);
+	game.world.bringToTop(gameoverText);
+	game.world.bringToTop(pressToStart);
+	
+	var playerScore = (1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime)) + (500 * player.numCollected) + player.fuel);
+	
+	UIText.score = game.add.text(800, 700, playerScore,  { font: "100px Tandysoft", fill: "#FFFFFF" });
+	UIText.score.fixedToCamera = true;
+	
+	gameoverScreen.visible = true;
+	gameoverText.visible = true;
+	pressToStart.visible = true;
+	
+    pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
+    gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
+	
+	player.fuel = player.startingFuel;
+	
+	currGameState = GameState.END;
 }
 
 function hitPerson(body1,body2) {
@@ -424,9 +442,15 @@ function hitFuel(body1,body2) {
 	body2.sprite.destroy();
 	player.fuel += 100;
 }
+
 function updateUIText() {
     pressToStart.tint = Math.random() * 0xffffff;
 }
+
+function updateGameOverText() {
+	gameoverText.visible = !gameoverText.visible;
+}
+
 function updateOBJText(){
 	if(UIText.gameObjective.visible == false)
 	{
@@ -439,15 +463,17 @@ function updateOBJText(){
 }
 
 function update() {
-	//drawStars();
-	
 	if(currGameState == GameState.END)
 	{
-		if(cursors.down.isDown && currGameState != GameState.END)
+		if(cursors.down.isDown)
 		{
 			currGameState = GameState.START;
-			pressToStart.visible = true;
 			UIText.endOfGame.visible = false;
+			
+			bgm.destroy();
+
+			game.cache.removeSound('bgm');
+			game.state.restart();
 		}
 		return;
 	}
@@ -457,8 +483,12 @@ function update() {
 		{
 			//timeCheck = game.time.now;
 			currGameState = GameState.PLAY;
-			pressToStart.visible = false;
-			game.time.events.stop(updateOBJText);
+			pressToStart.destroy();
+			pressToStart = null;
+			//pressToStartLoop.destroy();
+			//objTextLoop.destroy();
+			game.time.events.remove(pressToStartLoop);
+			game.time.events.remove(objTextLoop);
 			UIText.gameObjective.visible = false;
 			/*if(!UIText.gameObjective.visible)
 			{
@@ -474,10 +504,7 @@ function update() {
 	
 	if (player.fuel <= 0)
 	{
-		currGameState = GameState.END;
-	 	UIText.endOfGame = game.add.text(600, 500, "You Lose! n00b!!",  { font: "50px Arial", fill: "#FFFFFF" });
-	 	UIText.endOfGame.fixedToCamera = true;
-	 	UIText.endOfGame.visible = true;
+		hitEndPoint(null,null);
 	}
 
     if (cursors.left.isDown && currGameState != GameState.END)
@@ -493,8 +520,7 @@ function update() {
         player.sprite.body.setZeroRotation();
     }
 
-	//will get rid of this
-    if (cursors.up.isDown && currGameState != GameState.END)
+    if (cursors.up.isDown)
     {
         player.sprite.body.thrust(100);
         player.sprite.frame = 1;
@@ -517,7 +543,7 @@ function update() {
         player.sprite.frame = 0;
 	}
 
-    if (!game.camera.atLimit.x)
+    /*if (!game.camera.atLimit.x)
     {
         //starfield.tilePosition.x -= (player.sprite.body.velocity.x * game.time.physicsElapsed);
     }
@@ -525,7 +551,7 @@ function update() {
     if (!game.camera.atLimit.y)
     {
         //starfield.tilePosition.y -= (player.sprite.body.velocity.y * game.time.physicsElapsed);
-    }
+    }*/
 
 	for(var i = 0; i < planets.length; ++i)
 	{
