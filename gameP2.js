@@ -19,6 +19,7 @@ function preload() {
     this.game.load.image('startScreen', 'assets/startScreen.png', 1800, 1080);
     this.game.load.image('gameoverScreen', 'assets/gameoverScreen.png', 1800, 1080);
     this.game.load.image('gameover', 'assets/game_over.png', 800, 146);
+    this.game.load.image('fuelbar', 'assets/fuelbar.png', 156, 29);
 }
 
 var GameState = {
@@ -66,8 +67,6 @@ var maxLandingVelocitySquared = 40000;//equivalent to 200 velocity
 
 var currGameState = GameState.START;
 
-var stars = [];
-
 var spaceship = {
 	sprite:null,
 	frame:0
@@ -81,8 +80,26 @@ var objTextLoop;
 var pressToStartLoop;
 var gameoverTextLoop;
 
+var fuelbar = {
+	image:null,
+	originalWidth:0
+}
+
+
+///TESTING GRADIENTS FOR PLANET ATMOSPHERES
+
+var bmd;
+var innerCircle;
+var outerCircle;
+
+
+//////////////////////////
+
+
+
+
 function create() {
-    pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
+	pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
     objTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateOBJText, this);
 	
     game.world.setBounds(0, 0, 3843, 1080);
@@ -209,21 +226,6 @@ function start() {
     //bgm.loopFull(0.6);
 }
 
-function createStars() 
-{
-	for (var i = 0; i < 500; i++)
-	{
-		stars[i] = {
-			x: Math.random() * game.world.width,
-			y: Math.random() * game.world.height,
-			radius: Math.sqrt(Math.random() * 2),
-			alpha: 1.0,
-			decreasing: true,
-			dRatio: Math.random()*0.05
-		}
-	}
-}
-
 function createEndpoint()
 {
 	var endPointGroup = game.add.group();
@@ -245,6 +247,10 @@ function createUI() {
 	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(600, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	
+	fuelbar.image = game.add.image(30,900,'fuelbar');
+	fuelbar.originalWidth = 156;
+	fuelbar.image.fixedToCamera = true;
 	
 	startScreen  = game.add.sprite(0,0,'startScreen');
 	pressToStart = game.add.sprite(550, 900,'pressToStart');
@@ -270,6 +276,36 @@ function createUI() {
 
 function createPlanets()
 {
+	//  Our BitmapData (same size as our canvas)
+    bmd = game.make.bitmapData(1800, 1080);
+
+    //  Add it to the world or we can't see it
+    bmd.addToWorld();
+
+    //  Create the Circles
+    innerCircle = new Phaser.Circle(600, -200, 420);
+    outerCircle = new Phaser.Circle(600, -200, 1500);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(0, '#0000FF');
+    grd.addColorStop(1, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+    
+	
+	
+	
 	var planetsGroup = game.add.group();
 	planetsGroup.enableBody = true;
 	planetsGroup.physicsBodyType = Phaser.Physics.P2JS;
@@ -406,7 +442,7 @@ function hitEndPoint(body1,body2) {
 		game.world.bringToTop(gameoverScreen);
 		game.world.bringToTop(gameoverText);
 		game.world.bringToTop(pressToStart);
-		
+		 
 		var playerScore = (1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime)) + (500 * player.numCollected) + player.fuel);
 		
 		UIText.score = game.add.text(800, 700, playerScore,  { font: "100px Tandysoft", fill: "#FFFFFF" });
@@ -505,6 +541,30 @@ function update() {
 		return;
 	}
 	
+	
+	
+	
+	
+	
+	
+	/*var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(0, '#003BA2');
+    grd.addColorStop(1, '#000000');
+
+    bmd.cls();
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	if (player.fuel <= 0)
 	{
 		hitEndPoint(null,null);
@@ -512,11 +572,11 @@ function update() {
 
     if (cursors.left.isDown && currGameState != GameState.END)
     {
-        player.sprite.body.rotateLeft(70);
+        player.sprite.body.rotateLeft(80);
     }
     else if (cursors.right.isDown && currGameState != GameState.END)
     {
-        player.sprite.body.rotateRight(70);
+        player.sprite.body.rotateRight(80);
     }
     else
     {
@@ -556,6 +616,7 @@ function update() {
         //starfield.tilePosition.y -= (player.sprite.body.velocity.y * game.time.physicsElapsed);
     }*/
 
+	//handle player force due to planet gravities
 	for(var i = 0; i < planets.length; ++i)
 	{
 		var vecToPlanet = new Phaser.Point(planets[i].sprite.position.x - player.sprite.x, planets[i].sprite.position.y - player.sprite.y);
@@ -588,6 +649,7 @@ function updateUI()
 	/*if(currGameState != GameState.END) {
 		UIText.endOfGame.visible = false;
 	}*/
+	fuelbar.image.crop(new Phaser.Rectangle(0,0,(player.fuel / player.startingFuel) * fuelbar.originalWidth,fuelbar.image.height));
 }
 function throwPeople()
 {
