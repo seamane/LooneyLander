@@ -257,7 +257,7 @@ function create() {
 }
 
 function start() {
-    //bgm.loopFull(0.6);
+    bgm.loopFull(0.6);
 }
 
 function createEndpoint()
@@ -616,6 +616,7 @@ function update() {
 			bgm.destroy();
 
 			game.cache.removeSound('bgm');
+			throwList = null;
 			game.state.restart();
 		}
 		return;
