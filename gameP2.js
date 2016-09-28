@@ -83,6 +83,9 @@ var objTextLoop;
 var pressToStartLoop;
 var gameoverTextLoop;
 
+<<<<<<< HEAD
+var throwList = [];
+=======
 var fuelbar = {
 	image:null,
 	originalWidth:0
@@ -100,6 +103,7 @@ var outerCircle;
 
 
 
+>>>>>>> origin/master
 
 function create() {
 	pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
@@ -121,6 +125,7 @@ function create() {
 	planetCollisionGroup = game.physics.p2.createCollisionGroup();
 	fuelCollisionGroup = game.physics.p2.createCollisionGroup();
 	endPointCollisionGroup = game.physics.p2.createCollisionGroup();
+	throwPeopleCollisionGroup = game.physics.p2.createCollisionGroup();
 
 	game.sound.setDecodedCallback(bgm, start, this);
 	game.physics.p2.updateBoundsCollisionGroup();
@@ -322,7 +327,7 @@ function createPlanets()
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -346,7 +351,7 @@ function createPlanets()
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -369,7 +374,7 @@ function createPlanets()
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -394,7 +399,7 @@ function createPlanets()
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.rotation = -Math.PI / 2.0;
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -418,7 +423,7 @@ function createPlanets()
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -441,7 +446,7 @@ function createPlanets()
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -465,7 +470,7 @@ function createPlanets()
 	planet.sprite.body.rotation = Math.random() * Math.PI * 2;
 	planet.sprite.body.setCircle(planet.radius);
 	planet.sprite.body.setCollisionGroup(planetCollisionGroup);
-	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup]);
+	planet.sprite.body.collides([playerCollisionGroup,peopleCollisionGroup,throwPeopleCollisionGroup]);
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
@@ -496,7 +501,14 @@ function hitPlanet(body1,body2) {
 		}
 	}
 }
+function hitPlanetPerson(body1,body2) {
+	
+	if(player.sprite.body.x - body1.sprite.body.x >50)
+	{
+		body1.sprite.destroy();
+	}
 
+}
 function hitEndPoint(body1,body2) {
 	if(currGameState != GameState.END)
 	{
@@ -531,6 +543,7 @@ function hitPerson(body1,body2) {
     //  body2 is the body it impacted with, in this case our person
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
 	if(body2.sprite.alive) {
+		throwList.push(body2.id);
 		body2.sprite.alive = false;
 		body2.sprite.body = null;
 		body2.sprite.destroy();
@@ -710,6 +723,11 @@ function update() {
 	
 	spaceship.sprite.frame++;
 	spaceship.sprite.frame = spaceship.sprite.frame % 7;
+	var timeNow = this.game.time.totalElapsedSeconds();	
+	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3) && throwPerson != null)
+	{
+		throwPerson.destroy();
+	}
 }
 
 function updateUI()
@@ -724,15 +742,54 @@ function updateUI()
 	}*/
 	fuelbar.image.crop(new Phaser.Rectangle(0,0,(player.fuel / player.startingFuel) * fuelbar.originalWidth,fuelbar.image.height));
 }
+var deleteTime;
+var deleteTime1;
+var deleteTime2;
+var throwPerson;
 function throwPeople()
 {
 	var throwablePeople = game.add.group();
 	throwablePeople.enableBody = true;
     throwablePeople.physicsBodyType = Phaser.Physics.P2JS;
-	var throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
-	throwPerson.body.rotateLeft(300);
-	throwPerson.body.velocity.x = -100;
+    for(i =0 ; i<= throwList.length; i++)
+    {
 
+    	if(throwList[i] == 20)
+    	{
+    		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ryan');
+    		throwPerson.animations.add('blink');
+			throwPerson.animations.play('blink',6,true);
+			deleteTime = (game.time.now)/1000
+			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
+			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
+    		throwList.splice(i,1);
+    	}
+    	else if(throwList[i] == 18)
+    	{
+    		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
+    		throwPerson.animations.add('blink');
+			throwPerson.animations.play('blink',6,true);
+			deleteTime1 = (game.time.now)/1000
+			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
+			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
+    		throwList.splice(i,1);
+    	}
+    	else
+    	{
+    		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
+    		throwPerson.animations.add('blink');
+			throwPerson.animations.play('blink',6,true);
+			deleteTime2 = (game.time.now)/1000;
+			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
+			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
+    		throwList.splice(i,1);
+    	}
+
+    }
+	
+	throwPerson.body.rotateLeft(300);
+	throwPerson.body.velocity.x = -500;
+	
 }
 function drawStars()
 {
