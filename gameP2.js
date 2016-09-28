@@ -531,7 +531,7 @@ function hitPlanetPerson(body1,body2) {
 	
 	if(player.sprite.body.x - body1.sprite.body.x >50)
 	{
-		body1.sprite.destroy();
+		//body1.sprite.destroy();
 	}
 
 }
