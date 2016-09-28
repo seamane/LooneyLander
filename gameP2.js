@@ -83,9 +83,7 @@ var objTextLoop;
 var pressToStartLoop;
 var gameoverTextLoop;
 
-<<<<<<< HEAD
 var throwList = [];
-=======
 var fuelbar = {
 	image:null,
 	originalWidth:0
@@ -101,9 +99,6 @@ var outerCircle;
 
 //////////////////////////
 
-
-
->>>>>>> origin/master
 
 function create() {
 	pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
