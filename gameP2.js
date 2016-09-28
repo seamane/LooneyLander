@@ -616,7 +616,7 @@ function update() {
 			bgm.destroy();
 
 			game.cache.removeSound('bgm');
-			throwList = null;
+			throwList = [];
 			game.state.restart();
 		}
 		return;
