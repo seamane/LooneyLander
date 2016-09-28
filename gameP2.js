@@ -20,6 +20,9 @@ function preload() {
     this.game.load.image('gameoverScreen', 'assets/gameoverScreen.png', 1800, 1080);
     this.game.load.image('gameover', 'assets/game_over.png', 800, 146);
     this.game.load.image('fuelbar', 'assets/fuelbar.png', 156, 29);
+    this.game.load.image('clock', 'assets/Clock.png', 48, 48);
+    this.game.load.image('lifeIcon', 'assets/Life_Icon.png', 48, 48);
+    this.game.load.image('UIFuel', 'assets/Fuel_Icon.png', 48, 48);
 }
 
 var GameState = {
@@ -241,16 +244,31 @@ function createEndpoint()
 }
 
 function createUI() {
-	UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Tandysoft", fill: "#FFFFFF" });
-	UIText.time = game.add.text(10, 30, "Elapsed time: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
-	UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Tandysoft", fill: "#FFFFFF" });
-	UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
-	UIText.numCollected = game.add.text(800, 50, "Rescued: 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	//UIText.fuel = game.add.text(10, 10, "Fuel: " + player.fuel,  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.time = game.add.text(60, 20, ": 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	//UIText.velocityX = game.add.text(800, 10, "Horizontal Speed: " + (player.sprite.body.velocity.x),  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	//UIText.velocityY = game.add.text(800, 30, "Vertical Speed: " + (player.sprite.body.velocity.y),  { font: "20px Tandysoft", fill: "#FFFFFF" });
+	UIText.numCollected = game.add.text(60, 140, "x 0",  { font: "20px Tandysoft", fill: "#FFFFFF" });
 	UIText.endOfGame = game.add.text(600, 500, "You won! END OF GAME SUCKER!!!!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	
-	fuelbar.image = game.add.image(30,900,'fuelbar');
+	
+	var temp = game.add.image(50,85,'fuelbar');
+	temp.fixedToCamera = true;
+	temp.tint = 0x969696;
+	
+	fuelbar.image = game.add.image(50,85,'fuelbar');
 	fuelbar.originalWidth = 156;
 	fuelbar.image.fixedToCamera = true;
+	fuelbar.image.tint = 0x76ed42;
+	
+	var fuelbarSymbol = game.add.image(10,70,'UIFuel');
+	fuelbarSymbol.fixedToCamera = true;
+	
+	temp = game.add.image(10,10,'clock');
+	temp.fixedToCamera = true;
+	
+	temp = game.add.image(5,130,'lifeIcon');
+	temp.fixedToCamera = true;
 	
 	startScreen  = game.add.sprite(0,0,'startScreen');
 	pressToStart = game.add.sprite(550, 900,'pressToStart');
@@ -258,11 +276,11 @@ function createUI() {
 	gameoverText = game.add.sprite(450,100,'gameover');
 	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	
-	UIText.fuel.fixedToCamera = true;
+	//UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.gameObjective.fixedToCamera = true;
-	UIText.velocityX.fixedToCamera = true;
-	UIText.velocityY.fixedToCamera = true;
+	//UIText.velocityX.fixedToCamera = true;
+	//UIText.velocityY.fixedToCamera = true;
 	UIText.numCollected.fixedToCamera = true;
 	UIText.endOfGame.fixedToCamera = true;
 	UIText.endOfGame.visible = false;
@@ -277,34 +295,20 @@ function createUI() {
 function createPlanets()
 {
 	//  Our BitmapData (same size as our canvas)
-    bmd = game.make.bitmapData(1800, 1080);
+    bmd = game.make.bitmapData(3843, 1080);
 
     //  Add it to the world or we can't see it
     bmd.addToWorld();
 
-    //  Create the Circles
-    innerCircle = new Phaser.Circle(600, -200, 420);
-    outerCircle = new Phaser.Circle(600, -200, 1500);
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(600, -200, 1100);
+    outerCircle = new Phaser.Circle(600, -200, 1200);
 
 	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
-    grd.addColorStop(0, '#0000FF');
-    grd.addColorStop(1, 'transparent');
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
 
-    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    
-	
-	
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);	
 	
 	var planetsGroup = game.add.group();
 	planetsGroup.enableBody = true;
@@ -323,6 +327,16 @@ function createPlanets()
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
 	
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(30, 1200, 700);
+    outerCircle = new Phaser.Circle(30, 1200, 800);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
+	
 	planet = new Object();
 	planet.radius = 210;
 	planet.gravitationalRadius = 400;
@@ -337,6 +351,16 @@ function createPlanets()
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
 	
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(1800, 300, 700);
+    outerCircle = new Phaser.Circle(1800, 300, 800);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
+	
 	planet = new Object();
 	planet.radius = 210;
 	planet.gravitationalRadius = 400;
@@ -349,6 +373,16 @@ function createPlanets()
     planet.sprite.body.static = true;
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
+	
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(800, 600, 700);
+    outerCircle = new Phaser.Circle(800, 600, 800);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
 	
 	planet = new Object();
 	planet.radius = 210;
@@ -365,6 +399,16 @@ function createPlanets()
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
 	
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(1700, 1300, 1100);
+    outerCircle = new Phaser.Circle(1700, 1300, 1200);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
+	
 	planet = new Object();
 	planet.radius = 420;
 	planet.gravitationalRadius = 600;
@@ -379,6 +423,16 @@ function createPlanets()
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
 	
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(2700, 700, 1000);
+    outerCircle = new Phaser.Circle(2700, 700, 1100);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
+	
 	planet = new Object();
 	planet.radius = 330;
 	planet.gravitationalRadius = 550;
@@ -392,9 +446,19 @@ function createPlanets()
     planet.sprite.body.allowGravity = false;
 	planets[planets.length] = planet;
 	
+    //  Create the atmosphere
+    innerCircle = new Phaser.Circle(3100, 50, 700);
+    outerCircle = new Phaser.Circle(3100, 50, 800);
+
+	var grd = bmd.context.createRadialGradient(innerCircle.x, innerCircle.y, innerCircle.radius, outerCircle.x, outerCircle.y, outerCircle.radius);
+    grd.addColorStop(1, 'rgba(255,255,224,0.5)');
+    grd.addColorStop(0, 'transparent');
+
+    bmd.circle(outerCircle.x, outerCircle.y, outerCircle.radius, grd);
+	
 	planet = new Object();
 	planet.radius = 210;
-	planet.gravitationalRadius = 600;
+	planet.gravitationalRadius = 400;
 	planet.gravity = 250;
 	planet.sprite = planetsGroup.create(3100, 50, 'planet2');
 	planet.sprite.tint = 0x0ef0ff;
@@ -443,7 +507,7 @@ function hitEndPoint(body1,body2) {
 		game.world.bringToTop(gameoverText);
 		game.world.bringToTop(pressToStart);
 		 
-		var playerScore = (1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime)) + (500 * player.numCollected) + player.fuel);
+		var playerScore = (Math.max(1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime))) + (500 * player.numCollected) + player.fuel);
 		
 		UIText.score = game.add.text(800, 700, playerScore,  { font: "100px Tandysoft", fill: "#FFFFFF" });
 		UIText.score.fixedToCamera = true;
@@ -456,6 +520,7 @@ function hitEndPoint(body1,body2) {
 		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
 		
 		player.fuel = player.startingFuel;
+		player.numCollected = 0;
 		
 		currGameState = GameState.END;
 	}
@@ -569,6 +634,14 @@ function update() {
 	{
 		hitEndPoint(null,null);
 	}
+	else if(player.fuel / player.startingFuel < .2)
+	{
+		fuelbar.image.tint = 0xee4343;
+	}
+	else
+	{
+		fuelbar.image.tint = 0x76ed42;
+	}
 
     if (cursors.left.isDown && currGameState != GameState.END)
     {
@@ -641,11 +714,11 @@ function update() {
 
 function updateUI()
 {
-	UIText.fuel.setText("Fuel: " + player.fuel);
-	UIText.time.setText("Elapsed Seconds: " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
-	UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
-	UIText.velocityY.setText("Vertical Speed: " + (Math.trunc(-player.sprite.body.velocity.y)));
-	UIText.numCollected.setText("Rescued: " + player.numCollected);
+	//UIText.fuel.setText("Fuel: " + player.fuel);
+	UIText.time.setText(": " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
+	//UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
+	//UIText.velocityY.setText("Vertical Speed: " + (Math.trunc(-player.sprite.body.velocity.y)));
+	UIText.numCollected.setText("x " + player.numCollected);
 	/*if(currGameState != GameState.END) {
 		UIText.endOfGame.visible = false;
 	}*/
