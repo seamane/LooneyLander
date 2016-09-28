@@ -80,9 +80,9 @@ var objTextLoop;
 var pressToStartLoop;
 var gameoverTextLoop;
 
-<<<<<<< HEAD
+
 var throwList = [];
-=======
+
 var fuelbar = {
 	image:null,
 	originalWidth:0
@@ -100,7 +100,7 @@ var outerCircle;
 
 
 
->>>>>>> origin/master
+
 
 function create() {
 	pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
@@ -154,6 +154,12 @@ function create() {
 		fuelCollection.body.rotation = -0.53;
 		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
 		fuelCollection.body.collides([playerCollisionGroup]);
+		///For 3rd Bottom Planet///
+		var fuelCollection = fuel.create(2510, 405, 'fuel');
+		fuelCollection.body.setRectangle(70,70);
+		fuelCollection.body.rotation = -0.68;
+		fuelCollection.body.setCollisionGroup(fuelCollisionGroup);
+		fuelCollection.body.collides([playerCollisionGroup]);
 	}
 	/////////
 	/////People////
@@ -201,6 +207,30 @@ function create() {
 		person.body.setRectangle(72,72);
 		person.body.setCollisionGroup(peopleCollisionGroup);
 		person.body.rotation = 0.43;
+		person.body.collides([playerCollisionGroup]);
+	///For 3rd Planet-I///
+		var person = people.create(2350, 800, 'ryan');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = -2.00;
+		person.body.collides([playerCollisionGroup]);
+	///For 3rd Planet///
+		var person = people.create(3050, 600, 'ashley');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = 1.2;
+		person.body.collides([playerCollisionGroup]);
+	///For 4th Planet///
+		var person = people.create(3340, 100, 'ashley');
+		person.animations.add('blink');
+		person.animations.play('blink',6,true);
+		person.body.setRectangle(72,72);
+		person.body.setCollisionGroup(peopleCollisionGroup);
+		person.body.rotation = 1.96;
 		person.body.collides([playerCollisionGroup]);
 	}
 	//////////////
@@ -691,7 +721,7 @@ function throwPeople()
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
     	}
-    	else if(throwList[i] == 18)
+    	else if(throwList[i] == 19)
     	{
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
