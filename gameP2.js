@@ -66,7 +66,7 @@ var cursors;//for arrow key input
 
 var planets = [];
 var acceptableLandingAngle = 40;//acceptable landing angle when landing on planet, in degrees
-var maxLandingVelocitySquared = 40000;//equivalent to 200 velocity
+var maxLandingVelocitySquared = 90000;//equivalent to 300 velocity
 
 var currGameState = GameState.START;
 
@@ -521,8 +521,8 @@ function hitPlanet(body1,body2) {
 		//|| (player.sprite.body.velocity.x * player.sprite.body.velocity.x + player.sprite.body.velocity.y * player.sprite.body.velocity.y) > maxLandingVelocitySquared) {
 		//player loses a person they have collected
 		if(player.numCollected > 0) {
-			player.numCollected -= 1;
 			throwPeople();
+			player.numCollected -= 1;
 			//spawn that person(similar to sonic coins)
 		}
 	}
@@ -559,6 +559,7 @@ function hitEndPoint(body1,body2) {
 		
 		player.fuel = player.startingFuel;
 		player.numCollected = 0;
+		throwList = [];
 		
 		currGameState = GameState.END;
 	}
@@ -583,7 +584,7 @@ function hitFuel(body1,body2) {
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
 	body2.sprite.body = null;
 	body2.sprite.destroy();
-	player.fuel += 100;
+	player.fuel += 200;
 }
 
 function updateUIText() {
@@ -616,6 +617,9 @@ function update() {
 			bgm.destroy();
 
 			game.cache.removeSound('bgm');
+			while(throwList.length > 0) {
+ 		  		throwList.pop();
+			}
 			throwList = [];
 			game.state.restart();
 		}
@@ -759,6 +763,11 @@ function update() {
 
 function updateUI()
 {
+	var timeNow = this.game.time.totalElapsedSeconds();	
+	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+	{
+		throwPerson.destroy();
+	}
 	//UIText.fuel.setText("Fuel: " + player.fuel);
 	UIText.time.setText(": " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
 	//UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
@@ -848,8 +857,42 @@ function throwPeople()
     }
 	
 	throwPerson.body.rotateLeft(300);
-	throwPerson.body.velocity.x = -500;
-	
+	if(player.sprite.rotation==0)
+	{
+		throwPerson.body.velocity.y = 500;
+	}
+	else if(player.sprite.rotation>=0.1 && player.sprite.rotation <= 1.57)
+	{
+		throwPerson.body.velocity.x = -500;
+		throwPerson.body.velocity.y = 500;
+	}
+	else if(player.sprite.rotation==1.570)
+	{
+		throwPerson.body.velocity.x = -500;
+	}
+	else if(player.sprite.rotation>= 1.571 && player.sprite.rotation <= 3.14)
+	{
+		throwPerson.body.velocity.x = -500;	
+		throwPerson.body.velocity.y = -500;
+	}
+	else if(player.sprite.rotation== 3.141)
+	{
+		throwPerson.body.velocity.y = -500;
+	}
+	else if(player.sprite.rotation>= 3.142 && player.sprite.rotation <= 4.71)
+	{
+		throwPerson.body.velocity.x = 500;	
+		throwPerson.body.velocity.y = -500;
+	}
+	else if(player.sprite.rotation== 4.71)
+	{
+		throwPerson.body.velocity.x = 500;	
+	}
+	else if(player.sprite.rotation>= 4.72 && player.sprite.rotation <= 6.2)
+	{
+		throwPerson.body.velocity.x = -500;	
+		throwPerson.body.velocity.y = 500;
+	}
 }
 function drawStars()
 {
