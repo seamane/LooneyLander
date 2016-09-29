@@ -2,6 +2,9 @@ var game = new Phaser.Game(1800, 1050, Phaser.AUTO, 'phaser-example', { preload:
 
 function preload() {
     this.game.load.audio('bgm', 'assets/sounds/BGM.wav');
+    this.game.load.audio('pick', 'assets/sounds/pickup.wav');
+    this.game.load.audio('throw', 'assets/sounds/throw.wav');
+    this.game.load.audio('jet', 'assets/sounds/jetpack.wav');
     //this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.spritesheet('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.spritesheet('ashley', 'assets/AshleySprite.png', 72, 72);
@@ -74,7 +77,7 @@ var cursors;//for arrow key input
 
 var planets = [];
 var acceptableLandingAngle = 40;//acceptable landing angle when landing on planet, in degrees
-var maxLandingVelocitySquared = 90000;//equivalent to 300 velocity
+var maxLandingVelocitySquared = 122500;//equivalent to 350 velocity
 
 var currGameState = GameState.START;
 
