@@ -315,7 +315,7 @@ function createUI() {
 	temp.fixedToCamera = true;
 	
 	startScreen  = game.add.sprite(0,0,'startScreen');
-	pressToStart = game.add.sprite(550, 900,'pressToStart');
+	pressToStart = game.add.sprite(550, 850,'pressToStart');
 	pressToReplay = game.add.sprite(550, 900,'pressToReplay');
 	gameoverScreen = game.add.sprite(0,0,'gameoverScreen');
 	loseScreen = game.add.sprite(0,0,'gameoverBack');
@@ -323,7 +323,7 @@ function createUI() {
 	gameoverText.visible = false;
 	winText = game.add.sprite(275,100,'congrats');
 	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to win!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
-	UIText.gameWarning = game.add.text(660, 800, "WARNING: Land on your feet!",  { font: "30px Tandysoft", fill: "#FF0000" });
+	UIText.gameWarning = game.add.text(660, 770, "WARNING: Land on your feet!",  { font: "30px Tandysoft", fill: "#FF0000", fontWeight: "bold" });
 	
 	//UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
@@ -567,6 +567,7 @@ function gameOver(){
 		loseScreen.visible = true;
 		gameoverText.visible = false;
 		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
+		gameoverText.fixedToCamera = true;
 		game.world.bringToTop(pressToReplay);
 		pressToReplay.visible = true;
 		pressToReplayLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUILText, this);
@@ -603,12 +604,13 @@ function hitEndPoint(body1,body2) {
 		winText.visible = true;
 		winTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateWinText, this);
 		}
-		else if(player.numCollected ==0)
+		else if(player.numCollected==0)
 		{
 		game.world.bringToTop(loseScreen);
 		game.world.bringToTop(gameoverText);			
 		loseScreen.visible = true;
 		gameoverText.visible = false;
+		gameoverText.fixedToCamera = true;
 		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
 		}
 		else if(currGameState == GameState.END )
@@ -617,6 +619,7 @@ function hitEndPoint(body1,body2) {
 		game.world.bringToTop(gameoverText);			
 		loseScreen.visible = true;
 		gameoverText.visible = false;
+		gameoverText.fixedToCamera = true;
 		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
 		}
 		game.world.bringToTop(pressToReplay);
@@ -920,7 +923,7 @@ function throwPeople()
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
     	}
-    	else if(throwList[i] == 25)
+    	else if(throwList[i] == 50)
     	{
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
