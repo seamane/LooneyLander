@@ -14,6 +14,7 @@ function preload() {
     this.game.load.image('planet2', 'assets/Planet002.png', 432, 432);
     this.game.load.image('planet3', 'assets/Planet003.png', 648, 648);
     this.game.load.image('pressToStart', 'assets/PressToStart.png', 691, 100);
+	this.game.load.image('pressToReplay', 'assets/PressToReplay.png', 691, 100);    
     this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
     this.game.load.image('nebula2', 'assets/Nebula002.png', 1584, 1296);
     this.game.load.image('startScreen', 'assets/startScreen.png', 1800, 1080);
@@ -49,9 +50,13 @@ var UIText = {
 	numCollected:null,
 	endOfGame:null,
 	gameObjective:null,
-	score:null
+	score:null,
+	peopleSaved:null,
+	fuelSaved:null,
+	timeSpent:null
 }
 var pressToStart;
+var pressToReplay;
 var bgm; //background music
 var timeCheck;
 var playerCollisionGroup;
@@ -79,11 +84,15 @@ var spaceship = {
 
 var startScreen;
 var gameoverScreen;
+var loseScreen;
 var gameoverText;
+var winText;
 
 var objTextLoop;
 var pressToStartLoop;
+var pressToReplayLoop;
 var gameoverTextLoop;
+var winTextLoop;
 
 
 var throwList = [];
@@ -105,6 +114,7 @@ var outerCircle;
 
 function create() {
 	pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
+	pressToReplayLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUILText, this);
     objTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.5, updateOBJText, this);
 	
     game.world.setBounds(0, 0, 3843, 1080);
@@ -305,8 +315,12 @@ function createUI() {
 	
 	startScreen  = game.add.sprite(0,0,'startScreen');
 	pressToStart = game.add.sprite(550, 900,'pressToStart');
+	pressToReplay = game.add.sprite(550, 900,'pressToReplay');
 	gameoverScreen = game.add.sprite(0,0,'gameoverScreen');
-	gameoverText = game.add.sprite(450,100,'gameover');
+	loseScreen = game.add.sprite(0,0,'gameoverBack');
+	gameoverText = game.add.sprite(450,400,'gameover');
+	gameoverText.visible = false;
+	winText = game.add.sprite(275,100,'congrats');
 	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
 	
 	//UIText.fuel.fixedToCamera = true;
@@ -319,10 +333,13 @@ function createUI() {
 	UIText.endOfGame.visible = false;
 	UIText.gameObjective.visible = false;
 	pressToStart.visible = true;
+	pressToReplay.visible = false;
 	gameoverScreen.visible = false;
 	gameoverScreen.fixedToCamera = true;
-	gameoverText.visible = false;
-	gameoverText.fixedToCamera = true;
+	loseScreen.visible = false;
+	loseScreen.fixedToCamera = true;
+	winText.visible = false;
+	winText.fixedToCamera = true;
 }
 
 function createPlanets()
@@ -538,32 +555,68 @@ function hitPlanetPerson(body1,body2) {
 	}
 
 }
+function gameOver(){
+		pressToReplay = game.add.sprite(550, 900,'pressToReplay');
+		pressToReplay.fixedToCamera = true;
+		game.world.bringToTop(loseScreen);
+		game.world.bringToTop(gameoverText);			
+		loseScreen.visible = true;
+		gameoverText.visible = false;
+		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
+		game.world.bringToTop(pressToReplay);
+		pressToReplay.visible = true;
+		pressToReplayLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUILText, this);
+		player.fuel = player.startingFuel;
+		player.numCollected = 0;
+		while(throwList > 0)
+		{
+			throwList.pop();
+		}
+		throwList = [];
+		currGameState = GameState.END;
+}
 function hitEndPoint(body1,body2) {
 	if(currGameState != GameState.END)
 	{
-		pressToStart = game.add.sprite(550, 900,'pressToStart');
-		pressToStart.fixedToCamera = true;
-		
-		game.world.bringToTop(gameoverScreen);
-		game.world.bringToTop(gameoverText);
-		game.world.bringToTop(pressToStart);
-		 
+		pressToReplay = game.add.sprite(550, 900,'pressToReplay');
+		pressToReplay.fixedToCamera = true;
 		var playerScore = (Math.max(1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime))) + (500 * player.numCollected) + player.fuel);
-		
+		var timeNowScore = Math.trunc(game.time.totalElapsedSeconds());
+		if(playerScore >= 1)
+		{
+		game.world.bringToTop(gameoverScreen);
+		game.world.bringToTop(winText);
+		UIText.peopleSaved = game.add.text(600, 600, player.numCollected,  { font: "55px Tandysoft", fill: "#FFFFFF" });
+		UIText.peopleSaved.fixedToCamera = true;
+		UIText.fuelSaved = game.add.text(840, 600, player.fuel,  { font: "55px Tandysoft", fill: "#FFFFFF" });
+		UIText.fuelSaved.fixedToCamera = true;
+		UIText.timeSpent = game.add.text(1075, 600, timeNowScore+".00",  { font: "55px Tandysoft", fill: "#FFFFFF" });
+		UIText.timeSpent.fixedToCamera = true;
 		UIText.score = game.add.text(800, 700, playerScore,  { font: "100px Tandysoft", fill: "#FFFFFF" });
 		UIText.score.fixedToCamera = true;
-		
 		gameoverScreen.visible = true;
-		gameoverText.visible = true;
-		pressToStart.visible = true;
-		
-		pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
+
+		winText.visible = true;
+		winTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateWinText, this);
+		}
+		else if(currGameState == GameState.END )
+		{
+		game.world.bringToTop(loseScreen);
+		game.world.bringToTop(gameoverText);			
+		loseScreen.visible = true;
+		gameoverText.visible = false;
 		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
-		
-		player.fuel = player.startingFuel;
+		}
+		game.world.bringToTop(pressToReplay);
+		pressToReplay.visible = true;
+		pressToReplayLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUILText, this);
+				player.fuel = player.startingFuel;
 		player.numCollected = 0;
+		while(throwList > 0)
+		{
+			throwList.pop();
+		}
 		throwList = [];
-		
 		currGameState = GameState.END;
 	}
 }
@@ -593,11 +646,16 @@ function hitFuel(body1,body2) {
 function updateUIText() {
     pressToStart.tint = Math.random() * 0xffffff;
 }
-
+function updateUILText() {
+pressToReplay.tint = Math.random() * 0xffffff;
+}
 function updateGameOverText() {
 	gameoverText.visible = !gameoverText.visible;
 }
 
+function updateWinText() {
+	winText.visible = !winText.visible;
+}
 function updateOBJText(){
 	if(UIText.gameObjective.visible == false)
 	{
@@ -620,7 +678,8 @@ function update() {
 			bgm.destroy();
 
 			game.cache.removeSound('bgm');
-			while(throwList.length > 0) {
+			while(throwList.length > 0) 
+			{
  		  		throwList.pop();
 			}
 			throwList = [];
@@ -635,10 +694,13 @@ function update() {
 			//timeCheck = game.time.now;
 			currGameState = GameState.PLAY;
 			pressToStart.destroy();
+			pressToReplay.destroy();
 			pressToStart = null;
+			pressToReplay = null;
 			//pressToStartLoop.destroy();
 			//objTextLoop.destroy();
 			game.time.events.remove(pressToStartLoop);
+			game.time.events.remove(pressToReplayLoop);
 			game.time.events.remove(objTextLoop);
 			UIText.gameObjective.visible = false;
 			/*if(!UIText.gameObjective.visible)
@@ -679,7 +741,8 @@ function update() {
 	
 	if (player.fuel <= 0)
 	{
-		hitEndPoint(null,null);
+		gameOver();
+		//hitEndPoint(null,null);
 	}
 	else if(player.fuel / player.startingFuel < .2)
 	{
@@ -757,8 +820,12 @@ function update() {
 	
 	spaceship.sprite.frame++;
 	spaceship.sprite.frame = spaceship.sprite.frame % 7;
-	var timeNow = this.game.time.totalElapsedSeconds();	
-	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+	var timeNow = this.game.time.totalElapsedSeconds();
+	/*if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+	{
+		throwPerson.destroy();
+	}*/
+	if(timeNow - deleteTime >= 3 && throwPerson != null)
 	{
 		throwPerson.destroy();
 	}
@@ -766,12 +833,12 @@ function update() {
 
 function updateUI()
 {
-	var timeNow = this.game.time.totalElapsedSeconds();	
-//	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+/*	var timeNow = this.game.time.totalElapsedSeconds();	
+	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
 	if(timeNow - deleteTime >= 3 && throwPerson != null)
 	{
 		throwPerson.destroy();
-	}
+	}*/
 	//UIText.fuel.setText("Fuel: " + player.fuel);
 	UIText.time.setText(": " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
 	//UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
