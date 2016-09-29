@@ -951,6 +951,36 @@ function throwPeople()
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
     	}
+    	else if(throwList[i] == 20)
+    	{
+    		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
+    		throwPerson.animations.add('blink');
+			throwPerson.animations.play('blink',6,true);
+//			deleteTime5 = (game.time.now)/1000;
+			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
+			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
+    		throwList.splice(i,1);
+    	}
+    	else if(throwList[i] == 18)
+    	{
+    		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
+    		throwPerson.animations.add('blink');
+			throwPerson.animations.play('blink',6,true);
+//			deleteTime5 = (game.time.now)/1000;
+			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
+			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
+    		throwList.splice(i,1);
+    	}
+     	else if(throwList[i] == 22)
+    	{
+    		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
+    		throwPerson.animations.add('blink');
+			throwPerson.animations.play('blink',6,true);
+//			deleteTime5 = (game.time.now)/1000;
+			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
+			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
+    		throwList.splice(i,1);
+    	}
     	else
     	{
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
