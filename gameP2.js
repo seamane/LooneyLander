@@ -18,7 +18,9 @@ function preload() {
     this.game.load.image('nebula2', 'assets/Nebula002.png', 1584, 1296);
     this.game.load.image('startScreen', 'assets/startScreen.png', 1800, 1080);
     this.game.load.image('gameoverScreen', 'assets/gameoverScreen.png', 1800, 1080);
+    this.game.load.image('gameoverBack', 'assets/gameover_bg.png', 1800, 1080);
     this.game.load.image('gameover', 'assets/game_over.png', 800, 146);
+    this.game.load.image('congrats', 'assets/congrats.png', 800, 146);
     this.game.load.image('fuelbar', 'assets/fuelbar.png', 156, 29);
     this.game.load.image('clock', 'assets/Clock.png', 48, 48);
     this.game.load.image('lifeIcon', 'assets/Life_Icon.png', 48, 48);
@@ -522,6 +524,7 @@ function hitPlanet(body1,body2) {
 		//player loses a person they have collected
 		if(player.numCollected > 0) {
 			throwPeople();
+			deleteTime = (game.time.now)/1000;
 			player.numCollected -= 1;
 			//spawn that person(similar to sonic coins)
 		}
@@ -764,7 +767,8 @@ function update() {
 function updateUI()
 {
 	var timeNow = this.game.time.totalElapsedSeconds();	
-	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+//	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+	if(timeNow - deleteTime >= 3 && throwPerson != null)
 	{
 		throwPerson.destroy();
 	}
@@ -798,7 +802,7 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ryan');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-			deleteTime = (game.time.now)/1000
+//			deleteTime = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -808,7 +812,7 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ryan');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-			deleteTime1 = (game.time.now)/1000
+//			deleteTime1 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -818,7 +822,7 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-			deleteTime2 = (game.time.now)/1000
+//			deleteTime2 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -828,7 +832,7 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-			deleteTime3 = (game.time.now)/1000
+//			deleteTime3 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -838,7 +842,7 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-			deleteTime4 = (game.time.now)/1000
+//			deleteTime4 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -848,12 +852,12 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-			deleteTime5 = (game.time.now)/1000;
+//			deleteTime5 = (game.time.now)/1000;
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
     	}
-
+    	break;
     }
 	
 	throwPerson.body.rotateLeft(300);
