@@ -50,6 +50,7 @@ var UIText = {
 	numCollected:null,
 	endOfGame:null,
 	gameObjective:null,
+	gameWarning:null,
 	score:null,
 	peopleSaved:null,
 	fuelSaved:null,
@@ -321,17 +322,20 @@ function createUI() {
 	gameoverText = game.add.sprite(450,400,'gameover');
 	gameoverText.visible = false;
 	winText = game.add.sprite(275,100,'congrats');
-	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to clear the game!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	UIText.gameObjective = game.add.text(400, 500, "Rescue at least 1 person to win!",  { font: "50px Tandysoft", fill: "#FFFFFF" });
+	UIText.gameWarning = game.add.text(660, 800, "WARNING: Land on your feet!",  { font: "30px Tandysoft", fill: "#FF0000" });
 	
 	//UIText.fuel.fixedToCamera = true;
 	UIText.time.fixedToCamera = true;
 	UIText.gameObjective.fixedToCamera = true;
+	UIText.gameWarning.fixedToCamera = true;
 	//UIText.velocityX.fixedToCamera = true;
 	//UIText.velocityY.fixedToCamera = true;
 	UIText.numCollected.fixedToCamera = true;
 	UIText.endOfGame.fixedToCamera = true;
 	UIText.endOfGame.visible = false;
 	UIText.gameObjective.visible = false;
+	UIText.gameWarning.visible = false;
 	pressToStart.visible = true;
 	pressToReplay.visible = false;
 	gameoverScreen.visible = false;
@@ -582,7 +586,7 @@ function hitEndPoint(body1,body2) {
 		pressToReplay.fixedToCamera = true;
 		var playerScore = (Math.max(1200 - (10 * Math.trunc(game.time.totalElapsedSeconds() - startTime))) + (500 * player.numCollected) + player.fuel);
 		var timeNowScore = Math.trunc(game.time.totalElapsedSeconds());
-		if(playerScore >= 1)
+		if(playerScore >= 1 && player.numCollected>=1)
 		{
 		game.world.bringToTop(gameoverScreen);
 		game.world.bringToTop(winText);
@@ -657,13 +661,16 @@ function updateWinText() {
 	winText.visible = !winText.visible;
 }
 function updateOBJText(){
-	if(UIText.gameObjective.visible == false)
+	if(UIText.gameObjective.visible == false )
 	{
 		UIText.gameObjective.visible = true;
+		UIText.gameWarning.visible = true;
+
 	}
 	else
 	{
 		UIText.gameObjective.visible = false;
+		UIText.gameWarning.visible = true;
 	}
 }
 
@@ -703,6 +710,7 @@ function update() {
 			game.time.events.remove(pressToReplayLoop);
 			game.time.events.remove(objTextLoop);
 			UIText.gameObjective.visible = false;
+			UIText.gameWarning.visible = false;
 			/*if(!UIText.gameObjective.visible)
 			{
 				UIText.gameObjective.visible = true;
