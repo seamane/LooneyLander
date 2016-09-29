@@ -5,6 +5,8 @@ function preload() {
     this.game.load.audio('pick', 'assets/sounds/pickup.wav');
     this.game.load.audio('throw', 'assets/sounds/throw.wav');
     this.game.load.audio('jet', 'assets/sounds/jetpack.wav');
+    this.game.load.audio('pickupf', 'assets/sounds/pickupfuel.mp3');
+    this.game.load.audio('wjet', 'assets/sounds/weakjet.wav'); //weak jet
     //this.game.load.image('background', 'assets/background.png', 3843, 1080);
     this.game.load.spritesheet('bob', 'assets/BobSprite.png', 72, 72);
     this.game.load.spritesheet('ashley', 'assets/AshleySprite.png', 72, 72);
@@ -21,7 +23,7 @@ function preload() {
     this.game.load.image('nebula', 'assets/Nebula001.png', 1296, 1296);
     this.game.load.image('nebula2', 'assets/Nebula002.png', 1584, 1296);
     this.game.load.image('startScreen', 'assets/startScreen.png', 1800, 1080);
-    this.game.load.image('gameoverScreen', 'assets/gameoverScreen.png', 1800, 1080);
+    this.game.load.image('gameoverScreen', 'assets/gameoverScreen.jpg', 1800, 1080);
     this.game.load.image('gameoverBack', 'assets/gameover_bg.png', 1800, 1080);
     this.game.load.image('gameover', 'assets/game_over.png', 800, 146);
     this.game.load.image('congrats', 'assets/congrats.png', 800, 146);
@@ -119,6 +121,8 @@ var outerCircle;
 var jet;
 var pick;
 var throwS;
+var wjet; //weak jet
+var pickf; //fuel
 
 
 
@@ -132,7 +136,8 @@ function create() {
     jet = game.add.audio('jet');
 	pick = game.add.audio('pick');
 	throwS = game.add.audio('throw');
-
+	wjet = game.add.audio('wjet');
+	pickf = game.add.audio('pickupf');
 
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.defaultRestitution = 0.8;
@@ -592,6 +597,11 @@ function gameOver(){
 			throwList.pop();
 		}
 		throwList = [];
+		jet.pause();
+		pick.pause();
+		throwS.pause();
+		//wjet.pause(); 
+		pickf.pause();
 		currGameState = GameState.END;
 }
 function hitEndPoint(body1,body2) {
@@ -646,6 +656,11 @@ function hitEndPoint(body1,body2) {
 			throwList.pop();
 		}
 		throwList = [];
+		jet.pause();
+		pick.pause();
+		throwS.pause();
+		//wjet.pause(); 
+		pickf.pause();
 		currGameState = GameState.END;
 	}
 }
@@ -668,9 +683,14 @@ function hitFuel(body1,body2) {
 	//  body1 is the space player (as it's the body that owns the callback)
     //  body2 is the body it impacted with, in this case our panda
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-	body2.sprite.body = null;
-	body2.sprite.destroy();
-	player.fuel += 200;
+    if(body2.sprite.alive) {
+		body2.sprite.body = null;
+		body2.sprite.destroy();
+		body2.sprite.alive = false;
+		player.fuel += 200;
+		pickf.play();
+	}
+
 }
 
 function updateUIText() {
@@ -805,7 +825,7 @@ function update() {
         player.sprite.body.thrust(100);
         player.sprite.frame = 1;
 		player.fuel -= 1;
-		jet.play();
+		//wjet.play();
     }
 	else if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 0.1)
 	{
@@ -862,7 +882,7 @@ function update() {
 	{
 		throwPerson.destroy();
 	}*/
-	if(timeNow - deleteTime >= 3 && throwPerson != null)
+	if(timeNow - deleteTime >= 3) //&& throwPerson != null)
 	{
 		throwPerson.destroy();
 	}
@@ -887,11 +907,6 @@ function updateUI()
 	fuelbar.image.crop(new Phaser.Rectangle(0,0,(player.fuel / player.startingFuel) * fuelbar.originalWidth,fuelbar.image.height));
 }
 var deleteTime;
-var deleteTime1;
-var deleteTime2;
-var deleteTime3;
-var deleteTime4;
-var deleteTime5;
 var throwPerson;
 function throwPeople()
 {
@@ -906,7 +921,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ryan');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -916,7 +930,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ryan');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime1 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -926,7 +939,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime2 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -936,7 +948,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime3 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -946,7 +957,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'ashley');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime4 = (game.time.now)/1000
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -956,7 +966,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime5 = (game.time.now)/1000;
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -966,7 +975,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime5 = (game.time.now)/1000;
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -976,7 +984,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime5 = (game.time.now)/1000;
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
@@ -986,7 +993,6 @@ function throwPeople()
     		throwPerson = throwablePeople.create(player.sprite.body.x, player.sprite.body.y,'bob');
     		throwPerson.animations.add('blink');
 			throwPerson.animations.play('blink',6,true);
-//			deleteTime5 = (game.time.now)/1000;
 			throwPerson.body.setCollisionGroup(throwPeopleCollisionGroup);
 			throwPerson.body.collides(planetCollisionGroup,hitPlanetPerson,this);
     		throwList.splice(i,1);
