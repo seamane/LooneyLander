@@ -115,6 +115,12 @@ var outerCircle;
 
 
 //////////////////////////
+////SFX//////
+var jet;
+var pick;
+var throwS;
+
+
 
 function create() {
 	pressToStartLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.2, updateUIText, this);
@@ -123,6 +129,11 @@ function create() {
 	
     game.world.setBounds(0, 0, 3843, 1080);
     bgm = game.add.audio('bgm');
+    jet = game.add.audio('jet');
+	pick = game.add.audio('pick');
+	throwS = game.add.audio('throw');
+
+
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.defaultRestitution = 0.8;
     game.physics.p2.gravity.y = 0;
@@ -649,6 +660,7 @@ function hitPerson(body1,body2) {
 		body2.sprite.body = null;
 		body2.sprite.destroy();
 		player.numCollected += 1;
+		pick.play();
 	}
 }
 
@@ -793,18 +805,21 @@ function update() {
         player.sprite.body.thrust(100);
         player.sprite.frame = 1;
 		player.fuel -= 1;
+		jet.play();
     }
 	else if(this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.game.time.totalElapsedSeconds() - spaceBarPressed >= 0.1)
 	{
     	spaceBarPressed = this.game.time.totalElapsedSeconds();
 		player.spaceBarAngle = player.sprite.rotation - (Math.PI / 2);
 		player.fuel -= 100;
+		jet.play();
 	}
 	else if(this.game.time.totalElapsedSeconds() - spaceBarPressed <= 0.1)
 	{
 		player.sprite.body.force.x = Math.cos(player.spaceBarAngle) * 4000;    // accelerateToObject 
 		player.sprite.body.force.y = Math.sin(player.spaceBarAngle) * 4000;
         player.sprite.frame = 1;
+        jet.play();
 	}
 	else
 	{
@@ -855,12 +870,12 @@ function update() {
 
 function updateUI()
 {
-/*	var timeNow = this.game.time.totalElapsedSeconds();	
-	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
+	var timeNow = this.game.time.totalElapsedSeconds();	
+//	if((timeNow - deleteTime >= 3 || timeNow - deleteTime1 >= 3 || timeNow - deleteTime2 >= 3 || timeNow - deleteTime3 >= 3 || timeNow - deleteTime4 >= 3 || timeNow - deleteTime5 >= 3) && throwPerson != null)
 	if(timeNow - deleteTime >= 3 && throwPerson != null)
 	{
 		throwPerson.destroy();
-	}*/
+	}
 	//UIText.fuel.setText("Fuel: " + player.fuel);
 	UIText.time.setText(": " + Math.trunc(this.game.time.totalElapsedSeconds() - startTime));
 	//UIText.velocityX.setText("Horizontal Speed: " + (Math.trunc(player.sprite.body.velocity.x)));
@@ -986,6 +1001,7 @@ function throwPeople()
 		throwPerson.body.velocity.x = -500;	
 		throwPerson.body.velocity.y = 500;
 	}
+	throwS.play();
 }
 function drawStars()
 {
