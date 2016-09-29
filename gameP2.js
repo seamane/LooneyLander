@@ -603,6 +603,14 @@ function hitEndPoint(body1,body2) {
 		winText.visible = true;
 		winTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateWinText, this);
 		}
+		else if(player.numCollected ==0)
+		{
+		game.world.bringToTop(loseScreen);
+		game.world.bringToTop(gameoverText);			
+		loseScreen.visible = true;
+		gameoverText.visible = false;
+		gameoverTextLoop = game.time.events.loop(Phaser.Timer.SECOND * 0.8, updateGameOverText, this);
+		}
 		else if(currGameState == GameState.END )
 		{
 		game.world.bringToTop(loseScreen);
